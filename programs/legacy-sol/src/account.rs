@@ -17,7 +17,8 @@ pub struct Game {
 #[account]
 pub struct Player{
     pub name: String,
-    pub troop_cards: [u32, 10],
+    pub authority: Pubkey,
+    pub troop_cards: [u32; 10],
 }
 
 

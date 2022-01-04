@@ -33,16 +33,21 @@ pub mod legacy_sol {
         }
     }
 
-    pub fn init_player(ctx: Context<InitPlayer>, _bump:u8) -> ProgramResult {
-        Ok(())
-        /*
+    pub fn init_player(ctx: Context<InitPlayer>, _bump:u8, name: String) -> ProgramResult {
         //Check if the Game is enabled
         if !ctx.accounts.game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
         } else {
+            let player_acc = &mut ctx.accounts.player_account;
+            player_acc.authority = ctx.accounts.payer.key();
+            player_acc.name = name;
             Ok(())
-            //TODO: Find start location for player
-        }
-        */
+        }        
     }
+
+    /*
+    pub fn find_start_location(ctx: Context<FindStartLocation>) -> ProgramResult {
+
+    }
+    */
 }

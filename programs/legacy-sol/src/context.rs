@@ -31,4 +31,3 @@ pub struct InitPlayer<'info> {
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>
 }
-

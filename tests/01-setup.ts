@@ -6,7 +6,7 @@ import { getPDA } from './util';
 
 const {SystemProgram} = anchor.web3;
 
-export async function setupInitalState(){
+export async function setupInitalState(_gid:String){
   anchor.setProvider(anchor.Provider.env());
   //@ts-ignore
   const program = anchor.workspace.LegacySol as Program<LegacySol>;
@@ -23,7 +23,7 @@ export async function setupInitalState(){
   });
 
   //initalize the game
-  const gameId="101";
+  const gameId=_gid;
   const gameacc = await getPDA([Buffer.from(gameId)], program.programId);
   await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, {
     accounts: {
@@ -39,12 +39,8 @@ export async function setupInitalState(){
     contractadmin: contractadmin,
     gameacc: gameacc,
     gameId: gameId,
+    program: program,
+    provider: provider
   }
   return setup;
 }
-
-describe("legacy-sol initalization", () => {
-  it("initalizes the game", async ()=> {
-    await setupInitalState();
-  })
-})
