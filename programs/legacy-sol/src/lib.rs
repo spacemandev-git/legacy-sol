@@ -34,6 +34,9 @@ pub mod legacy_sol {
     }
 
     pub fn init_player(ctx: Context<InitPlayer>, _bump:u8) -> ProgramResult {
+        Ok(())
+        
+        /*
         //Check if the Game is enabled
         if !ctx.accounts.game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
@@ -41,5 +44,6 @@ pub mod legacy_sol {
             Ok(())
             //TODO: Find start location for player
         }
+        */
     }
 }
