@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::account::*;
+
 #[derive(Accounts)]
 #[instruction(_bump: u8)]
 pub struct Initialize<'info> {

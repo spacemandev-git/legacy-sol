@@ -1,8 +1,13 @@
 use anchor_lang::prelude::*;
-//use std::collections::HashMap;
-mod errors::ErrorCode;
-mod context::*;
-mod account::*;
+
+mod errors;
+mod context;
+mod account;
+mod event;
+
+use errors::*;
+use context::*;
+use event::*;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
