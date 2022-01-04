@@ -24,7 +24,7 @@ describe('Setup legacy game', () => {
         systemProgram: SystemProgram.programId
       }
     });
-    console.log("Initalization Admin Account:", await program.account.adminAccount.fetch(systemacc.account));
+    console.log("Initalization Admin Account:", await program.account.admin.fetch(systemacc.account));
   });
 
   const gameId = "101";
@@ -58,11 +58,11 @@ describe('Setup legacy game', () => {
         gameAccount: gameacc.account
       }
     })
-    console.log(await program.account.gameAccount.fetch(gameacc.account));    
+    console.log(await program.account.game.fetch(gameacc.account));    
   })
 });
 
-const getPDA = async (accBuf: Buffer, programId: anchor.web3.PublicKey) => {
+export const getPDA = async (accBuf: Buffer, programId: anchor.web3.PublicKey) => {
   const [acc, accbmp] = await anchor.web3.PublicKey.findProgramAddress([accBuf], programId)
   return {account: acc, bump: accbmp};
 }

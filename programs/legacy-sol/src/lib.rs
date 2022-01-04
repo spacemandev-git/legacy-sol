@@ -21,15 +21,25 @@ pub mod legacy_sol {
     }
 
     pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, admin_pk: Pubkey) -> ProgramResult {
-        if ctx.accounts.admin.key() != ctx.accounts.admin_account.key {
+        if ctx.accounts.admin_account.key != ctx.accounts.admin.key() {
             return Err(ErrorCode::Unauthorized.into())
         } else {
             let game_account = &mut ctx.accounts.game_account;
             game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
             game_account.admin = admin_pk;
-            game_account.id = id;
-            emit!(Event_New_Game {game_id: id, game_admin: admin_pk});
+            game_account.id = id.clone();
+            emit!(EventNewGame {game_id: id, game_admin: admin_pk});
             Ok(())
+        }
+    }
+
+    pub fn init_player(ctx: Context<InitPlayer>, _bump:u8) -> ProgramResult {
+        //Check if the Game is enabled
+        if !ctx.accounts.game.enabled {
+            return Err(ErrorCode::GameNotEnabled.into())
+        } else {
+            Ok(())
+            //TODO: Find start location for player
         }
     }
 }
