@@ -1,6 +1,5 @@
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
-import { assert } from 'chai';
 import { LegacySol } from '../target/types/legacy_sol';
 
 const {SystemProgram} = anchor.web3;
