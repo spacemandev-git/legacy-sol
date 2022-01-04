@@ -28,6 +28,7 @@ pub mod legacy_sol {
             game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
             game_account.admin = admin_pk;
             game_account.id = id;
+            emit!(Event_New_Game {game_id: id, game_admin: admin_pk});
             Ok(())
         }
     }
