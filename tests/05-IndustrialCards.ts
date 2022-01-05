@@ -1,0 +1,2 @@
+//normally found by searching buildings, have a debug function that an admin can call to mint them to players of a given type
+//ICs can be spawned into the world to modify a location, troops on a location, etc.
