@@ -35,7 +35,6 @@ pub mod legacy_sol {
 
     pub fn init_player(ctx: Context<InitPlayer>, _bump:u8) -> ProgramResult {
         Ok(())
-        
         /*
         //Check if the Game is enabled
         if !ctx.accounts.game.enabled {

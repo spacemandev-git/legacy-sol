@@ -24,8 +24,8 @@ pub struct InitGame<'info> {
 #[derive(Accounts)]
 #[instruction(_bump:u8)]
 pub struct InitPlayer<'info> {
-    pub game: Account<'info, Game>,                                                           //1028 ~ 10 cards worth of space                          
-    #[account(init, seeds=[game.id.as_ref(), player.key().as_ref()], bump=_bump, payer=payer, space=8+16+1028)]
+    pub game: Account<'info, Game>,                                                                                     
+    #[account(init, seeds=[game.id.as_ref(), player.key().as_ref()], bump=_bump, payer=payer, space=8+504)]
     pub player_account: Account<'info, Player>,
     pub player: Signer<'info>,
     pub payer: Signer<'info>,

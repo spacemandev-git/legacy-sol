@@ -1,6 +1,4 @@
 //game can be initalized
-
-
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { LegacySol } from '../target/types/legacy_sol';
@@ -44,3 +42,9 @@ export async function setupInitalState(){
   }
   return setup;
 }
+
+describe("legacy-sol initalization", () => {
+  it("initalizes the game", async ()=> {
+    await setupInitalState();
+  })
+})

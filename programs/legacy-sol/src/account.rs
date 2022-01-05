@@ -13,13 +13,20 @@ pub struct Game {
     pub enabled: bool,
 }
 
+
 #[account]
 pub struct Player{
     pub name: String,
-    pub troop_cards: Vec<Troop>,
+    pub troop_cards: [u32, 10],
 }
 
-#[account]
+
+
+
+
+
+/*
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct Troop{
     pub id: String, //64  example is 63: //https://arweave.net/zt3-t8SHDSck0TLcSuC-hdQb2E0civ0DVMRgwf6sCz0
     pub class: TroopClass, //4
@@ -39,3 +46,4 @@ pub enum TroopClass {
 impl Default for TroopClass {
     fn default() -> Self { TroopClass::Infantry }
 }
+*/

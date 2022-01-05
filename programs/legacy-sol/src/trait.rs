@@ -1,3 +1,4 @@
+/*
 use crate::account::*;
 
 pub trait Combat {
@@ -22,3 +23,4 @@ impl Combat for Troop {
     return attack;
   }
 }
+*/
