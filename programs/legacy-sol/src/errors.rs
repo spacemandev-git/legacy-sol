@@ -7,4 +7,8 @@ pub enum ErrorCode {
 
   #[msg("Game is not enabled.")]
   GameNotEnabled,
+
+  #[msg("Invalid Location")]
+  InvalidLocation,
+
 }

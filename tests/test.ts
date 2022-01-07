@@ -1,16 +1,20 @@
+import * as anchor from '@project-serum/anchor';
 import { setupInitalState } from "./01-setup";
-import { createPlayers } from "./02-players";
+import { createPlayers, spawnPlayers } from "./02-players";
 
 async function happyPath(){
   //setup
   const setup = await setupInitalState('happypath-game');
+  
   //players
-  const players = await createPlayers(setup);
-  //map  
+  const players = await createPlayers(setup, 2);
+
+  //spawn player
+  const spawnLocations = await spawnPlayers(setup, players);
 }
 
 describe("Legacy Test Suite", () => {
   it("checks happypath", async () => {
-    happyPath();
+    await happyPath();
   })
 })
