@@ -7,6 +7,7 @@ mod context;
 mod account;
 mod event;
 
+use account::*;
 use errors::*;
 use context::*;
 use event::*;
@@ -59,23 +60,9 @@ pub mod legacy_sol {
             } else {
                 //Initialize Location
                 let loc = &mut ctx.accounts.location;
-                loc.x = x;
-                loc.y = y; 
-
-                //Fetch Random Feature for Location
-                //let slot = SlotHashes[0];
-                //let slot_h: SlotHashes = SolanaSysvar::get()?;
-                //msg!("{:?}", slot_h.get(&0));
-                
-                //msg!("{} is current Timestamp", clock.unix_timestamp);
-
-                let clock = Clock::get().unwrap();
-                msg!("{} is current Slot", clock.slot);
-                msg!("{:?} is the hash of the slot", hash(&clock.slot.to_be_bytes()));
-                let slc = &hash(&clock.slot.to_be_bytes()).to_bytes()[0 .. 8];
-                let num: u64 = u64::from_be_bytes(slc.try_into().unwrap());
-                msg!("{:?} is the random value", num);
-
+                //loc.x = x;
+                //loc.y = y; 
+                init_loc(loc, x, y);
                 //Spawn Infantry Unit on starting location
                 //Set Tile Owner to Player Account
                 Ok(())
@@ -83,6 +70,14 @@ pub mod legacy_sol {
         }
     }
 }
+
+
+pub fn init_loc(loc:&mut Account<Location>, x:i64, y:i64) {
+    loc.x = x;
+    loc.y = y;
+}
+
+pub fn 
 
 /*
 pub fn init_loc(loc: Account, x:i64, y:i64){
@@ -92,4 +87,14 @@ pub fn get_random_u8() -> u8 {
     return 5;
 }
 
+*/
+
+/*
+msg!("{} is current Timestamp", clock.unix_timestamp);
+let clock = Clock::get().unwrap();
+msg!("{} is current Slot", clock.slot);
+msg!("{:?} is the hash of the slot", hash(&clock.slot.to_be_bytes()));
+let slc = &hash(&clock.slot.to_be_bytes()).to_bytes()[0 .. 8];
+let num: u64 = u64::from_be_bytes(slc.try_into().unwrap());
+msg!("{:?} is the random value", num);
 */
