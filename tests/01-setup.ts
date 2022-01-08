@@ -28,7 +28,7 @@ export async function setupInitalState(_gid:string){
   const gameacc = await getPDA([Buffer.from(gameId)], program.programId);
   const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 8),new anchor.BN(0).toArrayLike(Buffer, "be", 8)], program.programId);
 
-  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump,
+  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump, await getFeatures(), await getTroopList(),
     {
       accounts: {
         adminAccount: contractadmin.account,
@@ -51,11 +51,11 @@ export async function setupInitalState(_gid:string){
 }
 
 async function getFeatures(){
-  let features = new Map<anchor.BN,Feature>();
+  let features = [];
   return features;
 }
 
 async function getTroopList(){
-  let templates = new Map<anchor.BN, Troop>();
+  let templates = [];
   return templates;
 }

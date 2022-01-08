@@ -8,9 +8,10 @@ pub struct Admin {
 #[account]
 pub struct Game {
     pub id: String,
-    pub admin: Pubkey,
+    pub authority: Pubkey,
     pub enabled: bool,
-    pub features: Vec<Option<Feature>>
+    pub features: Vec<Feature>,
+    pub troop_templates: Vec<Troop>
     //pub features: HashMap<u8, Feature>,
     //pub troop_templates: HashMap<u16, Troop>
 }
