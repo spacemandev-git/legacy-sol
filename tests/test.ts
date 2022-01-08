@@ -4,13 +4,13 @@ import { createPlayers, spawnPlayers } from "./02-players";
 
 async function happyPath(){
   //setup
-  const setup = await setupInitalState('happypath-game');
-  
+  let setup = await setupInitalState('happypath-game');
+
   //players
-  const players = await createPlayers(setup, 2);
+  //const players = await createPlayers(setup, 2);
 
   //spawn player
-  const spawnLocations = await spawnPlayers(setup, players);
+  //const spawnLocations = await spawnPlayers(setup, players);
 }
 
 describe("Legacy Test Suite", () => {

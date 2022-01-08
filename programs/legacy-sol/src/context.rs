@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-
 use crate::account::*;
 
 #[derive(Accounts)]
@@ -34,8 +33,7 @@ pub struct InitGame<'info> {
         payer=admin,
         space=8+1028
     )]
-    pub start_location: Account<'info, Location>
-    
+    pub start_location: Account<'info, Location>,
 }
 
 #[derive(Accounts)]
@@ -57,7 +55,7 @@ pub struct InitPlayer<'info> {
 #[instruction(x:i64, y:i64, _bmp:u8)]
 pub struct SpawnPlayer<'info>{
     pub game: Account<'info, Game>,
-    pub player_account: Account<'info, Player>,
+    pub player: Account<'info, Player>,
     #[account(init, 
         seeds=[game.id.as_ref(), x.to_be_bytes().as_ref(), y.to_be_bytes().as_ref()],
         bump=_bmp,

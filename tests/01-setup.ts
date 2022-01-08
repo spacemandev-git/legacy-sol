@@ -2,6 +2,7 @@
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { LegacySol } from '../target/types/legacy_sol';
+import { Feature, Troop } from './interfaces';
 import { getPDA, Setup } from './util';
 
 const {SystemProgram} = anchor.web3;
@@ -21,12 +22,13 @@ export async function setupInitalState(_gid:string){
       systemProgram: SystemProgram.programId
     }
   });
-
+  console.log("Initalized System!")
   //initalize the game
   const gameId=_gid;
   const gameacc = await getPDA([Buffer.from(gameId)], program.programId);
-  const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 8),new anchor.BN(0).toArrayLike(Buffer, "be", 8)], program.programId)
-  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump, 
+  const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 8),new anchor.BN(0).toArrayLike(Buffer, "be", 8)], program.programId);
+
+  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump,
     {
       accounts: {
         adminAccount: contractadmin.account,
@@ -36,14 +38,24 @@ export async function setupInitalState(_gid:string){
         startLocation: startLoc.account,
       }
   })
-
+  console.log("Initalized Game!");
   //state variables are all outputs that can be used in tests
   const setup:Setup = {
     contractadmin: contractadmin,
     gameacc: gameacc,
     gameId: gameId,
     program: program,
-    startLoc: startLoc
+    startLoc: startLoc,
   }
   return setup;
+}
+
+async function getFeatures(){
+  let features = new Map<anchor.BN,Feature>();
+  return features;
+}
+
+async function getTroopList(){
+  let templates = new Map<anchor.BN, Troop>();
+  return templates;
 }

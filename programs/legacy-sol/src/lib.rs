@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::hash::*;
-use std::convert::TryInto;
 
 mod errors;
 mod context;
@@ -31,6 +30,8 @@ pub mod legacy_sol {
             game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
             game_account.admin = admin_pk;
             game_account.id = id.clone();
+            //game_account.features = features;
+            //game_account.troop_templates = troops;
             emit!(EventNewGame {game_id: id.clone(), game_admin: admin_pk});
             Ok(())
         }
@@ -60,11 +61,14 @@ pub mod legacy_sol {
             } else {
                 //Initialize Location
                 let loc = &mut ctx.accounts.location;
+                let features = &ctx.accounts.game.features;
                 //loc.x = x;
                 //loc.y = y; 
-                init_loc(loc, x, y);
+                init_loc(loc, features, x, y);
                 //Spawn Infantry Unit on starting location
+                //loc.troops = ctx.accounts.game.troop_templates.get(&1001).cloned(); //1001 should be Standard Infantry Troop
                 //Set Tile Owner to Player Account
+                loc.tile_owner = Some(ctx.accounts.player.key());
                 Ok(())
             }
         }
@@ -72,12 +76,19 @@ pub mod legacy_sol {
 }
 
 
-pub fn init_loc(loc:&mut Account<Location>, x:i64, y:i64) {
+pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Option<Feature>>, x:i64, y:i64) {
     loc.x = x;
     loc.y = y;
+    loc.feature = features[usize::from(get_random_u8())].clone();
+    
+    //loc.feature = features.get(&get_random_u8()).cloned();
 }
 
-pub fn 
+pub fn get_random_u8() -> u8 {
+    let clock = Clock::get().unwrap();
+    let num = &hash(&clock.slot.to_be_bytes()).to_bytes()[0];
+    return *num;
+}
 
 /*
 pub fn init_loc(loc: Account, x:i64, y:i64){
@@ -90,6 +101,8 @@ pub fn get_random_u8() -> u8 {
 */
 
 /*
+//use std::convert::TryInto;
+
 msg!("{} is current Timestamp", clock.unix_timestamp);
 let clock = Clock::get().unwrap();
 msg!("{} is current Slot", clock.slot);

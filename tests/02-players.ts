@@ -51,11 +51,11 @@ export async function spawnPlayers(setup:Setup, players: PDA[]){
       await setup.program.rpc.spawn(new anchor.BN(0), new anchor.BN(i+1), spawn_loc.bump, {
         accounts: {
           game: setup.gameacc.account,
-          playerAccount: players[i].account,
+          player: players[i].account,
           location: spawn_loc.account,
           connectingLoc: connecting_location.account,
           payer: setup.program.provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId
+          systemProgram: SystemProgram.programId,
         },
         signers: []
       })

@@ -10,6 +10,9 @@ pub struct Game {
     pub id: String,
     pub admin: Pubkey,
     pub enabled: bool,
+    pub features: Vec<Option<Feature>>
+    //pub features: HashMap<u8, Feature>,
+    //pub troop_templates: HashMap<u16, Troop>
 }
 
 #[account]
@@ -30,9 +33,9 @@ pub struct Location{
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct Feature {
-    name: String,
-    rarity: u8,
-    next_scan: i64, 
+    pub  name: String,
+    pub rarity: u8,
+    pub next_scan: i64, 
 }
 
 // total space: 64+32+4 = 100 (128)
