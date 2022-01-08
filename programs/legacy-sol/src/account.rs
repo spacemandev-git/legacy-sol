@@ -34,20 +34,20 @@ pub struct Location{
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct Feature {
+    pub weight: u8,
     pub  name: String,
-    pub rarity: u8,
     pub next_scan: i64, 
 }
 
-// total space: 64+32+4 = 100 (128)
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct Troop{
-    pub id: String, //64  example is 63: //https://arweave.net/zt3-t8SHDSck0TLcSuC-hdQb2E0civ0DVMRgwf6sCz0
-    pub class: TroopClass, //4
-    pub power: u8, //8
-    pub mod_inf: i8, //8
-    pub mod_armor: i8, //8
-    pub mod_air: i8, //8,
+    pub name: String, //64
+    pub link: String, //64  example is 63: //https://arweave.net/zt3-t8SHDSck0TLcSuC-hdQb2E0civ0DVMRgwf6sCz0
+    pub class: TroopClass, 
+    pub power: u8, 
+    pub mod_inf: i8, 
+    pub mod_armor: i8,
+    pub mod_air: i8, 
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]

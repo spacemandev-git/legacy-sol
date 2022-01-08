@@ -31,7 +31,7 @@ pub struct InitGame<'info> {
         seeds=[id.as_ref(), 0_i64.to_be_bytes().as_ref(), 0_i64.to_be_bytes().as_ref()],
         bump=_0_loc_bump,
         payer=admin,
-        space=8+1028
+        space=8+8192
     )]
     pub start_location: Account<'info, Location>,
 }
@@ -66,4 +66,11 @@ pub struct SpawnPlayer<'info>{
     pub connecting_loc: Account<'info, Location>,
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct ModifyGame<'info> {
+    #[account(mut, has_one=authority)]
+    pub game: Account<'info, Game>,
+    pub authority: Signer<'info>
 }

@@ -22,7 +22,7 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, admin_pk: Pubkey, _0_loc_bump:u8, features: Vec<Feature>, troop_list: Vec<Troop>) -> ProgramResult {
+    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, admin_pk: Pubkey, _0_loc_bump:u8) -> ProgramResult {
         if ctx.accounts.admin_account.key != ctx.accounts.admin.key() {
             return Err(ErrorCode::Unauthorized.into())
         } else {
@@ -30,8 +30,8 @@ pub mod legacy_sol {
             game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
             game_account.authority = admin_pk;
             game_account.id = id.clone();
-            game_account.features = features;
-            game_account.troop_templates = troop_list;
+            //game_account.features = features;
+            //game_account.troop_templates = troop_list;
             emit!(EventNewGame {game_id: id.clone(), game_admin: admin_pk});
             Ok(())
         }
@@ -73,15 +73,34 @@ pub mod legacy_sol {
             }
         }
     }
-}
+
+    pub fn add_features(ctx: Context<ModifyGame>, new_features: Vec<Feature>) -> ProgramResult {
+        let game = &mut ctx.accounts.game;
+        game.features.extend(new_features.iter().cloned());
+        Ok(())
+    }
+
+
+    pub fn add_troop_templates(ctx: Context<ModifyGame>, new_troops: Vec<Troop>) -> ProgramResult {
+        let game = &mut ctx.accounts.game;
+        game.troop_templates.extend(new_troops.iter().cloned());  
+        Ok(())
+    }}
 
 
 pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64) {
     loc.x = x;
     loc.y = y;
-    loc.feature = Some(features[usize::from(get_random_u8())].clone());
-    
+    //loc.feature = Some(features[usize::from(get_random_u8())].clone());
     //loc.feature = features.get(&get_random_u8()).cloned();
+    let random_number = get_random_u8();
+    for feature in features{
+        if feature.weight < random_number {
+            loc.feature = Some(feature.clone());
+            break;
+        }
+    }
+
 }
 
 pub fn get_random_u8() -> u8 {

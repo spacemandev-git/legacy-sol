@@ -1,0 +1,11 @@
+[
+    {
+        "name": "Basic Infantry",
+        "link": "",
+        "class": "Infantry",
+        "power": 8,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0
+    }
+]
