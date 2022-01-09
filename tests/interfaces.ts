@@ -17,23 +17,23 @@ export type Troop = {
     mod_air: anchor.BN, //8,
 }
 
-export enum TroopClass {
-    Infantry,
-    Armor,
-    Aircraft
-}
-
 export interface Setup {
     contractadmin: PDA,
     gameacc: PDA,
     startLoc: PDA,
     gameId: String,
     program: anchor.Program<LegacySol>,
-  }
+}
   
-  export interface PDA {
+export interface PDA {
     account: anchor.web3.PublicKey,
     bump: number
-  }
-  
-  
+}
+
+export interface SpawnedPlayers {
+    [player: string]: {
+        x: number, 
+        y: number,
+        acc: string
+    }
+}
