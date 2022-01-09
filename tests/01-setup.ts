@@ -84,6 +84,25 @@ async function getFeatures(){
 }
 
 async function getTroopList(){
-  let templates = [];
+  let templates: I.Troop[] = [];
+  let raw = JSON.parse((await fs.readFile('tests/data/troop_templates.json')).toString())
+  const getClass = (cls:string) => {
+    let tClass = {};
+    tClass[cls.toLowerCase()] = {};
+    return tClass;
+  }
+  
+  for (let t of raw){
+    templates.push({
+      name: t.name, 
+      link: t.link,
+      class: getClass(t['class']),
+      power: new anchor.BN(t.power),
+      mod_inf: new anchor.BN(t.mod_inf),
+      mod_armor: new anchor.BN(t.mod_armor),
+      mod_air: new anchor.BN(t.mod_air)
+    })
+  }
+
   return templates;
 }

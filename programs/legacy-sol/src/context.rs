@@ -24,14 +24,14 @@ pub struct InitGame<'info> {
         seeds=[id.as_ref()],
         bump=_bump, 
         payer=admin, 
-        space=8+32+58+1
+        space=8+10000
     )]
     pub game_account: Account<'info, Game>,
     #[account(init,
         seeds=[id.as_ref(), 0_i64.to_be_bytes().as_ref(), 0_i64.to_be_bytes().as_ref()],
         bump=_0_loc_bump,
         payer=admin,
-        space=8+8192
+        space=8+512
     )]
     pub start_location: Account<'info, Location>,
 }
@@ -60,7 +60,7 @@ pub struct SpawnPlayer<'info>{
         seeds=[game.id.as_ref(), x.to_be_bytes().as_ref(), y.to_be_bytes().as_ref()],
         bump=_bmp,
         payer=payer,
-        space=8+1028
+        space=8+512
     )]
     pub location: Account<'info, Location>,
     pub connecting_loc: Account<'info, Location>,

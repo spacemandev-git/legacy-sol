@@ -12,8 +12,6 @@ pub struct Game {
     pub enabled: bool,
     pub features: Vec<Feature>,
     pub troop_templates: Vec<Troop>
-    //pub features: HashMap<u8, Feature>,
-    //pub troop_templates: HashMap<u16, Troop>
 }
 
 #[account]
