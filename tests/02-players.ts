@@ -14,7 +14,7 @@ export async function createPlayers(setup:I.Setup, amtPlayers:number){
     keys.push(anchor.web3.Keypair.generate());
   }
 
-  let players = [];
+  let players:I.PDA[] = [];
   for(let [i, key] of keys.entries()){
     const acc = await getPDA([Buffer.from(setup.gameId), key.publicKey.toBuffer()], setup.program.programId)
     await setup.program.rpc.initPlayer(acc.bump, `Player-${i}`, {

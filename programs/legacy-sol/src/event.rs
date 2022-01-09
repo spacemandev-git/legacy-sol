@@ -11,15 +11,13 @@ pub struct NewGame {
 pub struct NewPlayerSpawn {
   pub game_acc: Pubkey,
   pub player: Pubkey,
-  pub x: i64,
-  pub y: i64
+  pub coords: Coords
 }
 
 #[event]
 pub struct NewLocationInitalized {
   pub game_acc: Pubkey,
-  pub x: i64,
-  pub y: i64,
+  pub coords: Coords,
   pub feature: Feature
 }
 
@@ -27,8 +25,8 @@ pub struct NewLocationInitalized {
 #[event]
 pub struct TroopsMoved {
   pub game_acc: Pubkey,
-  pub from: (i64, i64),
-  pub dest: (i64, i64),
+  pub from: Coords,
+  pub dest: Coords,
   pub moving_player_acc: Pubkey,
   pub moving_troops: Troop
 }
@@ -36,8 +34,14 @@ pub struct TroopsMoved {
 #[event]
 pub struct Combat {
   pub game_acc: Pubkey,
-  pub from: (i64, i64),
-  pub dest: (i64, i64),
+  pub from: Coords,
+  pub dest: Coords,
   pub atk_dmg: u8,
   pub def_dmg: u8
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub struct Coords{
+  pub x:i64,
+  pub y:i64
 }

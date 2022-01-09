@@ -72,7 +72,11 @@ pub mod legacy_sol {
                 //Set Tile Owner to Player Account
                 loc.tile_owner = Some(ctx.accounts.player.key());
                 loc.game_acc = ctx.accounts.game.key();
-                emit!(NewPlayerSpawn {game_acc:ctx.accounts.game.key(), player: ctx.accounts.player.key(), x:x, y:y});
+                emit!(NewPlayerSpawn {
+                    game_acc:ctx.accounts.game.key(), 
+                    player: ctx.accounts.player.key(), 
+                    coords: Coords {x:x, y:y}
+                });
                 Ok(())
             }
         }
@@ -109,8 +113,7 @@ pub mod legacy_sol {
         loc.game_acc = ctx.accounts.game.key();
         emit!(NewLocationInitalized {
             game_acc: ctx.accounts.game.key(),
-            x: x,
-            y: y,
+            coords: Coords {x: x, y: y},
             feature:loc.feature.as_ref().unwrap().clone()});
         Ok(())
     }
@@ -157,8 +160,8 @@ pub mod legacy_sol {
 
         emit! (TroopsMoved {
             game_acc: game.key(),
-            from: (from.x, from.y),
-            dest: (from.x, from.y),
+            from: Coords {x:from.x, y:from.y},
+            dest: Coords {x:dest.x, y:dest.y},
             moving_player_acc: player.key(),
             moving_troops: dest.troops.as_ref().unwrap().clone()
         });
@@ -183,6 +186,10 @@ pub mod legacy_sol {
         
         if from.tile_owner != Some(player.key()) {
             return Err(ErrorCode::PlayerLacksOwnership.into())
+        }
+
+        if dest.tile_owner == Some(player.key()) {
+            return Err(ErrorCode::NoFriendlyFire.into())
         }
 
         if from.troops == None {
@@ -224,8 +231,8 @@ pub mod legacy_sol {
 
             emit!(Combat {
                 game_acc: game.key(),
-                from: (from.x, from.y),
-                dest: (from.x, from.y),
+                from: Coords {x:from.x, y:from.y},
+                dest: Coords {x:dest.x, y:dest.y},
                 atk_dmg: atk_atk,
                 def_dmg: def_atk
             });
@@ -242,8 +249,8 @@ pub mod legacy_sol {
             }
             emit!(Combat {
                 game_acc: game.key(),
-                from: (from.x, from.y),
-                dest: (from.x, from.y),
+                from: Coords {x:from.x, y:from.y},
+                dest: Coords {x:dest.x, y:dest.y},
                 atk_dmg: atk_atk,
                 def_dmg: 0
             });
@@ -290,6 +297,12 @@ pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64
         }
     }
 }
+
+/**
+ * Generates a random number using the slothash[0]
+ * Can be improved by using hash(timestamp) to determine index of slothash to pick from 
+ * This would randomize even during tests 
+ */
 
 pub fn get_random_u8() -> u8 {
     let clock = Clock::get().unwrap();

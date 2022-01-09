@@ -4,7 +4,7 @@ import { LegacySol } from '../target/types/legacy_sol';
 
 import { setupInitalState } from "./01-setup";
 import { createPlayers, spawnPlayers } from "./02-players";
-import { initLocBySpawn, moveTroops } from './03-movement';
+import { initLocBySpawn, moveTroops, testCombatUntilWipe } from './03-movement';
 
 async function happyPath(){
   //setup
@@ -23,6 +23,7 @@ async function happyPath(){
   const movedLocs = await moveTroops(setup, locations);
 
   //Attack Some Units
+  await testCombatUntilWipe(setup, players[0].account.toString(), movedLocs[players[0].account.toString()].acc, movedLocs[players[1].account.toString()].acc);
 }
 
 describe("Legacy Test Suite", () => {

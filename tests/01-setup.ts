@@ -44,8 +44,7 @@ export async function setupInitalState(_gid:string){
 
   //upload Features and Troop Lists
   const features = await getFeatures();
-  console.log("-----------FEATURES----------------")
-  console.log(features);
+
   await program.rpc.addFeatures(features, {
     accounts: {
       game: gameacc.account,

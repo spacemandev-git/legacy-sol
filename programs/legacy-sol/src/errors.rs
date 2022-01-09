@@ -28,4 +28,7 @@ pub enum ErrorCode {
 
   #[msg("Distance exceeds Troop Range")]
   DistanceExceedsTroopRange,
+
+  #[msg("No friendly fire allowed")]
+  NoFriendlyFire,
 }
