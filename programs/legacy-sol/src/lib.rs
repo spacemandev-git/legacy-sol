@@ -32,7 +32,7 @@ pub mod legacy_sol {
             game_account.id = id.clone();
             //game_account.features = features;
             //game_account.troop_templates = troop_list;
-            emit!(EventNewGame {game_id: id.clone(), game_admin: admin_pk});
+            emit!(NewGame {game_id: id.clone(), game_admin: admin_pk});
             Ok(())
         }
     }
@@ -69,6 +69,7 @@ pub mod legacy_sol {
                 loc.troops = Some(ctx.accounts.game.troop_templates[0].clone()); //1001 should be Standard Infantry Troop
                 //Set Tile Owner to Player Account
                 loc.tile_owner = Some(ctx.accounts.player.key());
+                emit!(NewPlayerSpawn {player: ctx.accounts.player.key(), x:x, y:y});
                 Ok(())
             }
         }
@@ -85,8 +86,30 @@ pub mod legacy_sol {
         let game = &mut ctx.accounts.game;
         game.troop_templates.extend(new_troops.iter().cloned());  
         Ok(())
-    }}
+    }
 
+    pub fn initalize_location(ctx: Context<InitLoc>, x:i64, y:i64, _bmp:u8) -> ProgramResult {
+        //check that game is enabled
+        if !ctx.accounts.game.enabled {
+            return Err(ErrorCode::GameNotEnabled.into())
+        } 
+
+        let loc = &mut ctx.accounts.location;
+        let c_loc = &ctx.accounts.connecting_loc;
+        if c_loc.x < x-1 || c_loc.x > x+1 || c_loc.y < y-1 || c_loc.y > y+1{
+            return Err(ErrorCode::InvalidLocation.into())
+        } 
+
+        init_loc(loc, &ctx.accounts.game.features, x, y);
+        emit!(NewLocationInitalized {x: x, y: y});
+        Ok(())
+    }
+
+}
+
+/*
+ * Spawns a random feature on the location
+*/
 
 pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64) {
     loc.x = x;

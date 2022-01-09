@@ -74,3 +74,19 @@ pub struct ModifyGame<'info> {
     pub game: Account<'info, Game>,
     pub authority: Signer<'info>
 }
+
+#[derive(Accounts)]
+#[instruction(x:i64, y:i64, _bmp:u8)]
+pub struct InitLoc<'info>{
+    pub game: Account<'info, Game>,
+    pub player: Signer<'info>,
+    #[account(init,
+        seeds=[game.id.as_ref(), x.to_be_bytes().as_ref(), y.to_be_bytes().as_ref()],
+        bump=_bmp,
+        payer=player,
+        space=8+512        
+    )]
+    pub location: Account<'info, Location>,
+    pub connecting_loc: Account<'info, Location>,
+    pub system_program: Program<'info, System>
+}

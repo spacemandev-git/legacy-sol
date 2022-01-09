@@ -45,8 +45,6 @@ export async function spawnPlayers(setup:I.Setup, players: I.PDA[]){
       const y = new anchor.BN(i+1)//.toArrayLike(Buffer, "be", 8);
       const cX = new anchor.BN(0)//.toArrayLike(Buffer, "be", 8);
       const cY = new anchor.BN(i)//.toArrayLike(Buffer, "be", 8)
-      console.log(`Spawn Loc (${x}, ${Number(y)}), Connecting Loc (${cX}, ${cY})`);
-
       const spawn_loc = await getPDA([Buffer.from(setup.gameId),x.toArrayLike(Buffer, "be", 8),y.toArrayLike(Buffer, "be", 8)], setup.program.programId)
       const connecting_location = await getPDA([Buffer.from(setup.gameId), cX.toArrayLike(Buffer, "be", 8), cY.toArrayLike(Buffer, "be", 8)], setup.program.programId)
       await setup.program.rpc.spawn(new anchor.BN(0), new anchor.BN(i+1), spawn_loc.bump, {
@@ -60,8 +58,15 @@ export async function spawnPlayers(setup:I.Setup, players: I.PDA[]){
         },
         signers: []
       })
-      player_spawn_locations[players[i].account.toString()] = spawn_loc.account.toString(); 
-      console.log(`Spawning Player: %s at Location (0,${i}) %s`, players[i].account.toString(), spawn_loc.account.toString());
+      player_spawn_locations[players[i].account.toString()] = {
+        x: 0,
+        y: i+1,
+        acc: spawn_loc.account.toString()
+
+      }
+      //console.log(`Spawning Player: %s at Location (0,${i}) %s`, players[i].account.toString(), spawn_loc.account.toString());
     }
+    console.log("Player Spawns: ");
+    console.log(player_spawn_locations);
     return player_spawn_locations;
 }
