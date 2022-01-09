@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::hash::*;
 
@@ -69,7 +71,8 @@ pub mod legacy_sol {
                 loc.troops = Some(ctx.accounts.game.troop_templates[0].clone()); //1001 should be Standard Infantry Troop
                 //Set Tile Owner to Player Account
                 loc.tile_owner = Some(ctx.accounts.player.key());
-                emit!(NewPlayerSpawn {player: ctx.accounts.player.key(), x:x, y:y});
+                loc.game_acc = ctx.accounts.game.key();
+                emit!(NewPlayerSpawn {game_acc:ctx.accounts.game.key(), player: ctx.accounts.player.key(), x:x, y:y});
                 Ok(())
             }
         }
@@ -103,26 +106,38 @@ pub mod legacy_sol {
         } 
 
         init_loc(loc, &ctx.accounts.game.features, x, y);
-        emit!(NewLocationInitalized {x: x, y: y, feature:loc.feature.as_ref().unwrap().clone()});
+        loc.game_acc = ctx.accounts.game.key();
+        emit!(NewLocationInitalized {
+            game_acc: ctx.accounts.game.key(),
+            x: x,
+            y: y,
+            feature:loc.feature.as_ref().unwrap().clone()});
         Ok(())
     }
 
-    pub fn move_troops(ctx: Context<Move>) -> ProgramResult {
+    pub fn move_troops(ctx: Context<MoveOrAttack>) -> ProgramResult {
         //check that game is enabled
-        if !ctx.accounts.game.enabled {
+        let game = &ctx.accounts.game;
+        if !game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
         } 
 
         //Check that the tiles are connecting
         let dest = &mut ctx.accounts.destination;
         let from = &mut ctx.accounts.from;
+
+        if from.game_acc != game.key() || dest.game_acc != game.key() {
+            return Err(ErrorCode::WrongGameLocations.into())
+        }
+
+
         if from.x < dest.x-1 || from.x > dest.x+1 || from.y < dest.y-1 || from.y > dest.y+1{
             return Err(ErrorCode::InvalidLocation.into())
         } 
 
         //Check that the from tile has troops
         if from.troops == None {
-            return Err(ErrorCode::NoTroopsToMove.into());
+            return Err(ErrorCode::NoTroopsOnSelectedTile.into());
         }
 
         let player = &ctx.accounts.player;
@@ -140,12 +155,100 @@ pub mod legacy_sol {
         dest.tile_owner = Some(player.key());
         from.tile_owner = None;
 
-        emit! {TroopsMoved {
-            from: from.key(),
-            dest: dest.key(),
+        emit! (TroopsMoved {
+            game_acc: game.key(),
+            from: (from.x, from.y),
+            dest: (from.x, from.y),
             moving_player_acc: player.key(),
             moving_troops: dest.troops.as_ref().unwrap().clone()
-        }}
+        });
+        Ok(())
+    }
+
+    pub fn attack(ctx: Context<MoveOrAttack>) -> ProgramResult {
+        //check that game is enabled
+        let game = &ctx.accounts.game;
+        let player = &ctx.accounts.player;
+        if !game.enabled {
+            return Err(ErrorCode::GameNotEnabled.into())
+        } 
+
+        //Check that the tiles are connecting
+        let dest = &mut ctx.accounts.destination;
+        let from = &mut ctx.accounts.from;
+
+        if from.game_acc != game.key() || dest.game_acc != game.key() {
+            return Err(ErrorCode::WrongGameLocations.into())
+        }
+        
+        if from.tile_owner != Some(player.key()) {
+            return Err(ErrorCode::PlayerLacksOwnership.into())
+        }
+
+        if from.troops == None {
+            return Err(ErrorCode::NoTroopsOnSelectedTile.into())
+        }
+
+        if dest.troops == None {
+            return Err(ErrorCode::NoTroopsOnTarget.into())
+        }
+
+        //Check the distance between the two locations is less than or equal to the range of the attacking troops
+        let distance:f64 = (((dest.x - from.x).pow(2) + (dest.y - from.y).pow(2)) as f64).sqrt();
+        let unit_range = from.troops.as_ref().unwrap().range;
+        if distance > unit_range.into() {
+            return Err(ErrorCode::DistanceExceedsTroopRange.into())
+        }
+        let mut atk_troops = from.troops.as_ref().unwrap().clone();
+        let mut def_troops = dest.troops.as_ref().unwrap().clone();
+
+        if atk_troops.range == 1 {
+            let atk_atk = get_atk(&atk_troops, &def_troops);
+            let def_atk = get_atk(&def_troops, &atk_troops);
+            if def_troops.power.checked_sub(atk_atk) == None {
+                //atk troops wiped out
+                dest.troops = None;
+                dest.tile_owner = None;
+            } else {
+                def_troops.power -= atk_atk;
+                dest.troops = Some(def_troops);
+            }
+            if atk_troops.power.checked_sub(def_atk) == None {
+                //atk troops wiped out
+                from.troops = None;
+                from.tile_owner = None;
+            } else {
+                atk_troops.power -= def_atk;
+                from.troops = Some(atk_troops);
+            }
+
+            emit!(Combat {
+                game_acc: game.key(),
+                from: (from.x, from.y),
+                dest: (from.x, from.y),
+                atk_dmg: atk_atk,
+                def_dmg: def_atk
+            });
+
+        } else {
+            let atk_atk = get_atk(&atk_troops, &def_troops);
+            if def_troops.power.checked_sub(atk_atk) == None {
+                //atk troops wiped out
+                dest.troops = None;
+                dest.tile_owner = None;
+            } else {
+                def_troops.power -= atk_atk;
+                dest.troops = Some(def_troops);
+            }
+            emit!(Combat {
+                game_acc: game.key(),
+                from: (from.x, from.y),
+                dest: (from.x, from.y),
+                atk_dmg: atk_atk,
+                def_dmg: 0
+            });
+        }
+
         Ok(())
     }
 
@@ -155,10 +258,24 @@ pub mod legacy_sol {
     }   
 }
 
+
+pub fn get_atk(attacking: &Troop, defending: &Troop) -> u8{
+    //returns a random number between 0 to power
+    let mut attacking_power = get_random_u8() / (255/attacking.power);
+    if defending.class == TroopClass::Infantry {
+        attacking_power = attacking_power.saturating_add(attacking.mod_inf.try_into().unwrap());
+    } else if defending.class == TroopClass::Armor {
+        attacking_power = attacking_power.saturating_add(attacking.mod_armor.try_into().unwrap());
+    } else if defending.class == TroopClass::Aircraft {
+        attacking_power = attacking_power.saturating_add(attacking.mod_air.try_into().unwrap());
+    } 
+
+    return attacking_power;
+}
+
 /*
  * Spawns a random feature on the location
 */
-
 pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64) {
     loc.x = x;
     loc.y = y;
@@ -192,4 +309,16 @@ msg!("{:?} is the hash of the slot", hash(&clock.slot.to_be_bytes()));
 let slc = &hash(&clock.slot.to_be_bytes()).to_bytes()[0 .. 8];
 let num: u64 = u64::from_be_bytes(slc.try_into().unwrap());
 msg!("{:?} is the random value", num);
+*/
+
+/* COMBAT
+fn main() {
+  let r:u8 = 56;
+  let max:u8 = 255;
+  let p:u8 = 99;
+  let s:u8 = max/p;
+  println!("Segment: {}", s);
+  let target = r/s;
+  println!("Target: {}", target);
+}
 */

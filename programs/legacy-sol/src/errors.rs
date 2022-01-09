@@ -14,10 +14,18 @@ pub enum ErrorCode {
   #[msg("Player doesn't own the tile")]
   PlayerLacksOwnership,
 
-  #[msg("No troops on tile to move")]
-  NoTroopsToMove,
+  #[msg("No troops on selected tile")]
+  NoTroopsOnSelectedTile,
 
   #[msg("Destination tile is occupied")]
-  DestinationOccupied
+  DestinationOccupied,
 
+  #[msg("Locations from wrong game.")]
+  WrongGameLocations,
+
+  #[msg("No troops on target tile.")]
+  NoTroopsOnTarget,
+
+  #[msg("Distance exceeds Troop Range")]
+  DistanceExceedsTroopRange,
 }

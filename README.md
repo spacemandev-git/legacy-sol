@@ -23,3 +23,7 @@ An in progress RTS game on Solana blockchain using the Anchor framework.
 - Unit Mods (applied to deployed Units by you)
 - Location Mods (Search for IC, Damage Unit on Location)
 - Reset Move Charges/Next Move Timer
+
+
+# Combat
+- hash the timestamp to find which byte of the slot hash to use to calculate damage

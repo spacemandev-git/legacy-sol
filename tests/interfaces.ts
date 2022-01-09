@@ -53,3 +53,11 @@ export interface Locs {
         }
     }
 }
+
+export interface LocationPlayers {
+    [player: string]: {
+        x: number, 
+        y: number,
+        acc: string
+    }
+}

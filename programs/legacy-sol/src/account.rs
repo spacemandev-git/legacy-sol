@@ -23,6 +23,7 @@ pub struct Player{
 
 #[account]
 pub struct Location{ 
+    pub game_acc: Pubkey,
     pub x: i64,
     pub y: i64,
     pub feature: Option<Feature>,

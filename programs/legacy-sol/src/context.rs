@@ -92,7 +92,7 @@ pub struct InitLoc<'info>{
 }
 
 #[derive(Accounts)]
-pub struct Move<'info> {
+pub struct MoveOrAttack<'info> {
     pub game: Account<'info, Game>,
     #[account(mut)]
     pub from: Account<'info, Location>,
@@ -101,7 +101,8 @@ pub struct Move<'info> {
     pub player: Account<'info, Player>
 }
 
+
 #[derive(Accounts)]
 pub struct Debug {
-    
+
 }

@@ -54,6 +54,7 @@ export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
 }
 
 export async function moveTroops(setup: I.Setup, locs:I.Locs){
+  let movedLocs: I.LocationPlayers = {} 
   for(let player of Object.keys(locs)){
     console.log(`\n
     !!Before Move!!
@@ -73,5 +74,13 @@ export async function moveTroops(setup: I.Setup, locs:I.Locs){
     Spawn Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].spawn.acc))}
     Dest Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].adjacent.acc))}
     `)
+    movedLocs[player] = {
+      x: locs[player].adjacent.x,
+      y: locs[player].adjacent.y,
+      acc: locs[player].adjacent.acc
+    }
   }
+  return movedLocs;
 }
+
+export async function testCombat(setup:I.Setup){}

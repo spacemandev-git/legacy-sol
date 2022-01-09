@@ -20,7 +20,9 @@ async function happyPath(){
   const locations = await initLocBySpawn(setup, spawnLocations);
 
   //Move units to adjacent tile
-  await moveTroops(setup, locations);
+  const movedLocs = await moveTroops(setup, locations);
+
+  //Attack Some Units
 }
 
 describe("Legacy Test Suite", () => {
