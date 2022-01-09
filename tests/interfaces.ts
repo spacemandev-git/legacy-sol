@@ -4,7 +4,7 @@ import { LegacySol } from '../target/types/legacy_sol';
 export type Feature = {
     name: string,
     weight: anchor.BN,
-    next_scan: anchor.BN
+    nextScan: anchor.BN
 }
 
 export type Troop = {
@@ -13,9 +13,9 @@ export type Troop = {
     class: any, //4
     range: anchor.BN,
     power: anchor.BN, //8
-    mod_inf: anchor.BN, //8
-    mod_armor: anchor.BN, //8
-    mod_air: anchor.BN, //8,
+    modInf: anchor.BN, //8
+    modArmor: anchor.BN, //8
+    modAir: anchor.BN, //8,
 }
 
 export interface Setup {

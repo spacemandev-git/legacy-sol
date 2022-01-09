@@ -32,6 +32,6 @@ describe("Legacy Test Suite", () => {
     //@ts-ignore
     const program = anchor.workspace.LegacySol as Program<LegacySol>;
     const provider = anchor.Provider.env();
-    await program.rpc.debug([{x:new anchor.BN(-1)}], {accounts: {}});
+    //await program.rpc.debug([{y:new anchor.BN(-1), x: new anchor.BN(5)}], {accounts: {}});
   })
 })

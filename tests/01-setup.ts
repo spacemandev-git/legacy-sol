@@ -79,7 +79,7 @@ async function getFeatures(){
     features.push( {
       weight: new anchor.BN(f.weight),
       name: f.name,
-      next_scan: new anchor.BN(f.next_scan)
+      nextScan: new anchor.BN(f.next_scan)
     })
 
   }
@@ -102,9 +102,9 @@ async function getTroopList(){
       class: getClass(t['class']),
       power: new anchor.BN(t.power),
       range: new anchor.BN(t.range),
-      mod_inf: new anchor.BN(t.mod_inf),
-      mod_armor: new anchor.BN(t.mod_armor),
-      mod_air: new anchor.BN(t.mod_air)
+      modInf: new anchor.BN(t.mod_inf),
+      modArmor: new anchor.BN(t.mod_armor),
+      modAir: new anchor.BN(t.mod_air)
     })
   }
 

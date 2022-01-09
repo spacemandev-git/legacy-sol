@@ -61,6 +61,7 @@ impl Default for TroopClass {
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
-pub struct DebugStruct{
-    pub x:i64
+pub struct DebugStruct {
+    pub x: u8,
+    pub y: i64, 
 }
