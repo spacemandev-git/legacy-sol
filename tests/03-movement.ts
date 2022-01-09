@@ -14,7 +14,7 @@ import * as I from './interfaces';
 
   
 export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
-  let locs = []
+  let locs:I.Locs = {}
   for(let player of Object.keys(spawns)){
     let conn_loc = {
       x: new anchor.BN(spawns[player].x).toArrayLike(Buffer, "be", 8),
@@ -36,11 +36,42 @@ export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
       }
     });
 
+    locs[player] = {
+      spawn: spawns[player],
+      adjacent: {
+        x: spawns[player].x +1,
+        y: spawns[player].y,
+        acc: new_loc['pda']['account'].toString()
+      }
+    }
     //Locs contains ALL posssible locations on the game board
-    locs.push({x:spawns[player].x, y:spawns[player].y});
-    locs.push({x:spawns[player].x +1, y:spawns[player].y});
+    //locs.push({x:spawns[player].x, y:spawns[player].y, pda: conn_loc['pda']});
+    //locs.push({x:spawns[player].x +1, y:spawns[player].y, pda: new_loc['pda']});
   }
   console.log("All Locations: ");
   console.log(locs);
   return locs;
+}
+
+export async function moveTroops(setup: I.Setup, locs:I.Locs){
+  for(let player of Object.keys(locs)){
+    console.log(`\n
+    !!Before Move!!
+    Spawn Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].spawn.acc))}
+    Dest Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].adjacent.acc))}
+    `)
+    await setup.program.rpc.moveTroops({
+      accounts: {
+        game: setup.gameacc.account,
+        player: player,
+        from: locs[player].spawn.acc,
+        destination: locs[player].adjacent.acc
+      }
+    })
+    console.log(`\n
+    !!After Move!!
+    Spawn Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].spawn.acc))}
+    Dest Loc: ${JSON.stringify(await setup.program.account.location.fetch(locs[player].adjacent.acc))}
+    `)
+  }
 }

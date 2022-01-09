@@ -90,3 +90,18 @@ pub struct InitLoc<'info>{
     pub connecting_loc: Account<'info, Location>,
     pub system_program: Program<'info, System>
 }
+
+#[derive(Accounts)]
+pub struct Move<'info> {
+    pub game: Account<'info, Game>,
+    #[account(mut)]
+    pub from: Account<'info, Location>,
+    #[account(mut)]
+    pub destination: Account<'info, Location>,
+    pub player: Account<'info, Player>
+}
+
+#[derive(Accounts)]
+pub struct Debug {
+    
+}

@@ -43,7 +43,10 @@ export async function setupInitalState(_gid:string){
 
 
   //upload Features and Troop Lists
-  await program.rpc.addFeatures(await getFeatures(), {
+  const features = await getFeatures();
+  console.log("-----------FEATURES----------------")
+  console.log(features);
+  await program.rpc.addFeatures(features, {
     accounts: {
       game: gameacc.account,
       authority: provider.wallet.publicKey
@@ -78,8 +81,8 @@ async function getFeatures(){
       name: f.name,
       next_scan: new anchor.BN(f.next_scan)
     })
-  }
 
+  }
   return features;
 }
 
@@ -98,6 +101,7 @@ async function getTroopList(){
       link: t.link,
       class: getClass(t['class']),
       power: new anchor.BN(t.power),
+      range: new anchor.BN(t.range),
       mod_inf: new anchor.BN(t.mod_inf),
       mod_armor: new anchor.BN(t.mod_armor),
       mod_air: new anchor.BN(t.mod_air)

@@ -4,8 +4,9 @@
         "link": "",
         "class": "Infantry",
         "power": 8,
+        "range": 1,
         "mod_inf": 0,
-        "mod_armor": 0,
-        "mod_air": 0
+        "mod_armor": 1,
+        "mod_air": -1
     }
 ]

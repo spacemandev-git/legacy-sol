@@ -11,6 +11,7 @@ export type Troop = {
     name: string,
     link: string, //64  example is 63: //https://arweave.net/zt3-t8SHDSck0TLcSuC-hdQb2E0civ0DVMRgwf6sCz0
     class: any, //4
+    range: anchor.BN,
     power: anchor.BN, //8
     mod_inf: anchor.BN, //8
     mod_armor: anchor.BN, //8
@@ -35,5 +36,20 @@ export interface SpawnedPlayers {
         x: number, 
         y: number,
         acc: string
+    }
+}
+
+export interface Locs {
+    [player:string] : {
+        spawn: {
+            x:number,
+            y:number,
+            acc:string
+        },
+        adjacent: {
+            x:number,
+            y:number,
+            acc:string
+        }
     }
 }

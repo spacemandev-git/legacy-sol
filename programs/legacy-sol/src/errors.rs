@@ -11,4 +11,13 @@ pub enum ErrorCode {
   #[msg("Invalid Location")]
   InvalidLocation,
 
+  #[msg("Player doesn't own the tile")]
+  PlayerLacksOwnership,
+
+  #[msg("No troops on tile to move")]
+  NoTroopsToMove,
+
+  #[msg("Destination tile is occupied")]
+  DestinationOccupied
+
 }

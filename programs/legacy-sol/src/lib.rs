@@ -76,6 +76,7 @@ pub mod legacy_sol {
     }
 
     pub fn add_features(ctx: Context<ModifyGame>, new_features: Vec<Feature>) -> ProgramResult {
+        msg!("Features: {:?}", new_features);
         let game = &mut ctx.accounts.game;
         game.features.extend(new_features.iter().cloned());
         Ok(())
@@ -83,6 +84,7 @@ pub mod legacy_sol {
 
 
     pub fn add_troop_templates(ctx: Context<ModifyGame>, new_troops: Vec<Troop>) -> ProgramResult {
+        msg!("Troop Templates: {:?}", new_troops);
         let game = &mut ctx.accounts.game;
         game.troop_templates.extend(new_troops.iter().cloned());  
         Ok(())
@@ -101,10 +103,56 @@ pub mod legacy_sol {
         } 
 
         init_loc(loc, &ctx.accounts.game.features, x, y);
-        emit!(NewLocationInitalized {x: x, y: y});
+        emit!(NewLocationInitalized {x: x, y: y, feature:loc.feature.as_ref().unwrap().clone()});
         Ok(())
     }
 
+    pub fn move_troops(ctx: Context<Move>) -> ProgramResult {
+        //check that game is enabled
+        if !ctx.accounts.game.enabled {
+            return Err(ErrorCode::GameNotEnabled.into())
+        } 
+
+        //Check that the tiles are connecting
+        let dest = &mut ctx.accounts.destination;
+        let from = &mut ctx.accounts.from;
+        if from.x < dest.x-1 || from.x > dest.x+1 || from.y < dest.y-1 || from.y > dest.y+1{
+            return Err(ErrorCode::InvalidLocation.into())
+        } 
+
+        //Check that the from tile has troops
+        if from.troops == None {
+            return Err(ErrorCode::NoTroopsToMove.into());
+        }
+
+        let player = &ctx.accounts.player;
+        //Check it belongs to the player
+        if player.key() != from.tile_owner.unwrap() {
+            return Err(ErrorCode::PlayerLacksOwnership.into());
+        }
+        //Check that the to tile does not have troops
+        if dest.troops != None {
+            return Err(ErrorCode::DestinationOccupied.into());
+        }
+        //Move the troops
+        dest.troops = from.troops.clone();
+        from.troops = None;
+        dest.tile_owner = Some(player.key());
+        from.tile_owner = None;
+
+        emit! {TroopsMoved {
+            from: from.key(),
+            dest: dest.key(),
+            moving_player_acc: player.key(),
+            moving_troops: dest.troops.as_ref().unwrap().clone()
+        }}
+        Ok(())
+    }
+
+    pub fn debug(_ctx: Context<Debug>, x:Vec<DebugStruct>) -> ProgramResult {
+        msg!("X: {:?}", x);
+        Ok(())
+    }   
 }
 
 /*
@@ -117,13 +165,13 @@ pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64
     //loc.feature = Some(features[usize::from(get_random_u8())].clone());
     //loc.feature = features.get(&get_random_u8()).cloned();
     let random_number = get_random_u8();
+    //msg!("Random Feature Num: {}", random_number);
     for feature in features{
-        if feature.weight < random_number {
+        if random_number < feature.weight {
             loc.feature = Some(feature.clone());
             break;
         }
     }
-
 }
 
 pub fn get_random_u8() -> u8 {

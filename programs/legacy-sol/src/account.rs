@@ -30,25 +30,26 @@ pub struct Location{
     pub tile_owner: Option<Pubkey>,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct Feature {
     pub weight: u8,
-    pub  name: String,
+    pub name: String,
     pub next_scan: i64, 
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub struct Troop{
     pub name: String, //64
     pub link: String, //64  example is 63: //https://arweave.net/zt3-t8SHDSck0TLcSuC-hdQb2E0civ0DVMRgwf6sCz0
     pub class: TroopClass, 
+    pub range: u8,
     pub power: u8, 
     pub mod_inf: i8, 
     pub mod_armor: i8,
     pub mod_air: i8, 
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub enum TroopClass {
     Infantry,
     Armor,
@@ -57,4 +58,9 @@ pub enum TroopClass {
 
 impl Default for TroopClass {
     fn default() -> Self { TroopClass::Infantry }
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct DebugStruct{
+    pub x:i64
 }
