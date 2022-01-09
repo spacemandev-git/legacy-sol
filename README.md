@@ -27,3 +27,9 @@ An in progress RTS game on Solana blockchain using the Anchor framework.
 
 # Combat
 - hash the timestamp to find which byte of the slot hash to use to calculate damage
+    - Doesn't really matter b/c timestamp hash will be the same in a given slot
+    - you can only generate 1 real random number kind of
+    - maybe keep a counter of random number generated and then move to next idx of slothash?
+    - no idea where to keep such a global variable though
+    - Units should have attack speed as a field, along with next attack. every attack, next attack can only happen when slots + attack_speed has elapsed    
+        - Move and Attack should be same? Unit can either move or attack? moving should also push forward the timeframe

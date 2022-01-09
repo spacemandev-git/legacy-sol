@@ -210,8 +210,8 @@ pub mod legacy_sol {
         let mut def_troops = dest.troops.as_ref().unwrap().clone();
 
         if atk_troops.range == 1 {
-            let atk_atk = get_atk(&atk_troops, &def_troops);
-            let def_atk = get_atk(&def_troops, &atk_troops);
+            let atk_atk = get_atk(&atk_troops, &def_troops, 0);
+            let def_atk = get_atk(&def_troops, &atk_troops, 1);
             if def_troops.power.checked_sub(atk_atk) == None {
                 //atk troops wiped out
                 dest.troops = None;
@@ -238,7 +238,7 @@ pub mod legacy_sol {
             });
 
         } else {
-            let atk_atk = get_atk(&atk_troops, &def_troops);
+            let atk_atk = get_atk(&atk_troops, &def_troops, 0);
             if def_troops.power.checked_sub(atk_atk) == None {
                 //atk troops wiped out
                 dest.troops = None;
@@ -266,9 +266,9 @@ pub mod legacy_sol {
 }
 
 
-pub fn get_atk(attacking: &Troop, defending: &Troop) -> u8{
+pub fn get_atk(attacking: &Troop, defending: &Troop, idx:usize) -> u8{
     //returns a random number between 0 to power
-    let mut attacking_power = get_random_u8() / (255/attacking.power);
+    let mut attacking_power = get_random_u8(idx) / (255/attacking.power);
     if defending.class == TroopClass::Infantry {
         attacking_power = attacking_power.saturating_add(attacking.mod_inf.try_into().unwrap());
     } else if defending.class == TroopClass::Armor {
@@ -288,7 +288,7 @@ pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64
     loc.y = y;
     //loc.feature = Some(features[usize::from(get_random_u8())].clone());
     //loc.feature = features.get(&get_random_u8()).cloned();
-    let random_number = get_random_u8();
+    let random_number = get_random_u8(0);
     //msg!("Random Feature Num: {}", random_number);
     for feature in features{
         if random_number < feature.weight {
@@ -300,13 +300,13 @@ pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64
 
 /**
  * Generates a random number using the slothash[0]
- * Can be improved by using hash(timestamp) to determine index of slothash to pick from 
- * This would randomize even during tests 
+ * Idx determines where from the slot hash it pulls the random number from
+ * Useful when multiple random numbers are required, such as in 2 way combat
  */
 
-pub fn get_random_u8() -> u8 {
+pub fn get_random_u8(idx:usize) -> u8 {
     let clock = Clock::get().unwrap();
-    let num = &hash(&clock.slot.to_be_bytes()).to_bytes()[0];
+    let num = &hash(&clock.slot.to_be_bytes()).to_bytes()[idx];
     return *num;
 }
 
