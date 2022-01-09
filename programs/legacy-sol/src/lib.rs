@@ -66,7 +66,7 @@ pub mod legacy_sol {
                 //loc.y = y; 
                 init_loc(loc, features, x, y);
                 //Spawn Infantry Unit on starting location
-                //loc.troops = ctx.accounts.game.troop_templates.get(&1001).cloned(); //1001 should be Standard Infantry Troop
+                loc.troops = Some(ctx.accounts.game.troop_templates[0].clone()); //1001 should be Standard Infantry Troop
                 //Set Tile Owner to Player Account
                 loc.tile_owner = Some(ctx.accounts.player.key());
                 Ok(())

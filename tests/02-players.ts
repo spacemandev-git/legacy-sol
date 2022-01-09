@@ -4,9 +4,10 @@ const {SystemProgram} = anchor.web3;
 //Tests that players can be created
 //Players can generate a start location (the map grows clockwise from max x,y)
 
-import { getPDA, PDA, Setup } from './util';
+import { getPDA } from './util';
+import * as I from './interfaces';
 
-export async function createPlayers(setup:Setup, amtPlayers:number){
+export async function createPlayers(setup:I.Setup, amtPlayers:number){
   const keys = [];
   
   for(let i=0; i<amtPlayers;i++){
@@ -36,7 +37,7 @@ export async function createPlayers(setup:Setup, amtPlayers:number){
   return players;
 }
 
-export async function spawnPlayers(setup:Setup, players: PDA[]){
+export async function spawnPlayers(setup:I.Setup, players: I.PDA[]){
     let player_spawn_locations = {}
 
     for(let i=0; i<players.length; i++){
