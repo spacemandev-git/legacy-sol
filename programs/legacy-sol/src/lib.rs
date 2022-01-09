@@ -211,16 +211,21 @@ pub mod legacy_sol {
 
         if atk_troops.range == 1 {
             let atk_atk = get_atk(&atk_troops, &def_troops, 0);
+            msg!("Atk Dmg: {}", atk_atk);
             let def_atk = get_atk(&def_troops, &atk_troops, 1);
-            if def_troops.power.checked_sub(atk_atk) == None {
-                //atk troops wiped out
+            msg!("Def Dmg: {}", def_atk);
+
+            if def_troops.power.checked_sub(atk_atk) == Some(0) || 
+               def_troops.power.checked_sub(atk_atk) == None {
+                //def troops wiped out
                 dest.troops = None;
                 dest.tile_owner = None;
             } else {
                 def_troops.power -= atk_atk;
                 dest.troops = Some(def_troops);
             }
-            if atk_troops.power.checked_sub(def_atk) == None {
+            if atk_troops.power.checked_sub(def_atk) == Some(0) ||
+               atk_troops.power.checked_sub(def_atk) == None {
                 //atk troops wiped out
                 from.troops = None;
                 from.tile_owner = None;

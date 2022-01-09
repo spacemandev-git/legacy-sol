@@ -102,4 +102,42 @@ export async function testCombatUntilWipe(setup:I.Setup, attackingPlayer: string
   Attacking Loc: ${JSON.stringify(await setup.program.account.location.fetch(attackingLoc))}
   Defending Loc: ${JSON.stringify(await setup.program.account.location.fetch(defendingLoc))}
   `)
+
+  console.log(`
+  !!Before Attack!!
+  Attacking Loc: ${JSON.stringify(await setup.program.account.location.fetch(attackingLoc))}
+  Defending Loc: ${JSON.stringify(await setup.program.account.location.fetch(defendingLoc))}
+  `)
+  await setup.program.rpc.attack({
+    accounts: {
+      game: setup.gameacc.account,
+      from: attackingLoc,
+      destination: defendingLoc,
+      player: attackingPlayer
+    }
+  })
+  console.log(`
+  !!After Attack!!
+  Attacking Loc: ${JSON.stringify(await setup.program.account.location.fetch(attackingLoc))}
+  Defending Loc: ${JSON.stringify(await setup.program.account.location.fetch(defendingLoc))}
+  `)
+
+  console.log(`
+  !!Before Attack!!
+  Attacking Loc: ${JSON.stringify(await setup.program.account.location.fetch(attackingLoc))}
+  Defending Loc: ${JSON.stringify(await setup.program.account.location.fetch(defendingLoc))}
+  `)
+  await setup.program.rpc.attack({
+    accounts: {
+      game: setup.gameacc.account,
+      from: attackingLoc,
+      destination: defendingLoc,
+      player: attackingPlayer
+    }
+  })
+  console.log(`
+  !!After Attack!!
+  Attacking Loc: ${JSON.stringify(await setup.program.account.location.fetch(attackingLoc))}
+  Defending Loc: ${JSON.stringify(await setup.program.account.location.fetch(defendingLoc))}
+  `)
 }
