@@ -52,13 +52,13 @@ pub mod legacy_sol {
         }        
     }
 
-    pub fn spawn(ctx: Context<SpawnPlayer>, x:i16, y:i16, _bmp:u8) -> ProgramResult {
+    pub fn spawn(ctx: Context<SpawnPlayer>, x:i8, y:i8, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         if !ctx.accounts.game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
         } else {
             //Check the location is null but has atleast one touching existing location
-            let c_loc = &ctx.accounts.connecting_loc;
+            let c_loc = &ctx.accounts.connecting_loc.coords;
             if c_loc.x < x-1 || c_loc.x > x+1 || c_loc.y < y-1 || c_loc.y > y+1{
                 return Err(ErrorCode::InvalidLocation.into())
             } else {
@@ -95,7 +95,7 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn init_location(ctx: Context<InitLoc>, x:i16, y:i16, _bmp:u8) -> ProgramResult {
+    pub fn init_location(ctx: Context<InitLoc>, x:i8, y:i8, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         let game = &mut ctx.accounts.game;
         if !game.enabled {
@@ -103,7 +103,7 @@ pub mod legacy_sol {
         } 
 
         let loc = &mut ctx.accounts.location;
-        let c_loc = &ctx.accounts.connecting_loc;
+        let c_loc = &ctx.accounts.connecting_loc.coords;
         if c_loc.x < x-1 || c_loc.x > x+1 || c_loc.y < y-1 || c_loc.y > y+1{
             return Err(ErrorCode::InvalidLocation.into())
         } 
@@ -255,7 +255,7 @@ pub mod legacy_sol {
         }
 
 
-        if from.x < dest.x-1 || from.x > dest.x+1 || from.y < dest.y-1 || from.y > dest.y+1{
+        if from.coords.x < dest.coords.x-1 || from.coords.x > dest.coords.x+1 || from.coords.y < dest.coords.y-1 || from.coords.y > dest.coords.y+1{
             return Err(ErrorCode::InvalidLocation.into())
         } 
 
@@ -281,8 +281,8 @@ pub mod legacy_sol {
 
         emit! (TroopsMoved {
             game_acc: game.key(),
-            from: Coords {x:from.x, y:from.y},
-            dest: Coords {x:dest.x, y:dest.y},
+            from: Coords {x:from.coords.x, y:from.coords.y},
+            dest: Coords {x:dest.coords.x, y:dest.coords.y},
             moving_player_acc: player.key(),
             moving_troops: dest.troops.as_ref().unwrap().clone()
         });
@@ -322,7 +322,7 @@ pub mod legacy_sol {
         }
 
         //Check the distance between the two locations is less than or equal to the range of the attacking troops
-        let distance:f64 = (((dest.x - from.x).pow(2) + (dest.y - from.y).pow(2)) as f64).sqrt();
+        let distance:f64 = (((dest.coords.x - from.coords.x).pow(2) + (dest.coords.y - from.coords.y).pow(2)) as f64).sqrt();
         let unit_range = from.troops.as_ref().unwrap().range;
         if distance > unit_range.into() {
             return Err(ErrorCode::DistanceExceedsTroopRange.into())
@@ -357,8 +357,8 @@ pub mod legacy_sol {
 
             emit!(Combat {
                 game_acc: game.key(),
-                from: Coords {x:from.x, y:from.y},
-                dest: Coords {x:dest.x, y:dest.y},
+                from: Coords {x:from.coords.x, y:from.coords.y},
+                dest: Coords {x:dest.coords.x, y:dest.coords.y},
                 atk_dmg: atk_atk,
                 def_dmg: def_atk
             });
@@ -375,8 +375,8 @@ pub mod legacy_sol {
             }
             emit!(Combat {
                 game_acc: game.key(),
-                from: Coords {x:from.x, y:from.y},
-                dest: Coords {x:dest.x, y:dest.y},
+                from: Coords {x:from.coords.x, y:from.coords.y},
+                dest: Coords {x:dest.coords.x, y:dest.coords.y},
                 atk_dmg: atk_atk,
                 def_dmg: 0
             });
@@ -409,9 +409,9 @@ pub fn get_atk(attacking: &Troop, defending: &Troop, idx:usize) -> u8{
 /*
  * Spawns a random feature on the location
 */
-pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i16, y:i16) {
-    loc.x = x;
-    loc.y = y;
+pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i8, y:i8) {
+    loc.coords.x = x;
+    loc.coords.y = y;
     //loc.feature = Some(features[usize::from(get_random_u8())].clone());
     //loc.feature = features.get(&get_random_u8()).cloned();
     let random_number = get_random_u8(0);
