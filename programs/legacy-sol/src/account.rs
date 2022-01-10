@@ -11,14 +11,17 @@ pub struct Game {
     pub authority: Pubkey,
     pub enabled: bool,
     pub features: Vec<Feature>,
-    pub troop_templates: Vec<Troop>
+    pub new_player_unit: Troop,
+    pub deck_len: u64,
+    pub feature_scan_delay: u64 //How long features must go before they can be scanned again
 }
 
 #[account]
 pub struct Player{
     pub name: String,
     pub authority: Pubkey,
-    pub troop_cards: [u32; 10],
+    pub cards: Vec<Card>,
+    pub redeemable_cards: Vec<u64>
 }
 
 #[account]
@@ -35,7 +38,8 @@ pub struct Location{
 pub struct Feature {
     pub weight: u8,
     pub name: String,
-    pub next_scan: i64, 
+    pub last_scanned: u64, // slot when this feature was last scanned
+    pub times_scanned: u64
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
@@ -60,6 +64,40 @@ pub enum TroopClass {
 impl Default for TroopClass {
     fn default() -> Self { TroopClass::Infantry }
 }
+
+#[account]
+pub struct CardTemplate{
+    pub card: Card
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub struct Card {
+    pub id: u64,
+    pub name: String,
+    pub description: String,
+    pub link: String, //link to image
+    pub card_type: CardType,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub enum CardType {
+    None,
+    Unit { 
+        unit: Troop
+    },
+    UnitMod {
+        range: i8,
+        power: i8,
+        mod_inf: i8,
+        mod_armor: i8,
+        mod_air: i8
+    },
+}
+
+impl Default for CardType {
+    fn default() -> Self { CardType::None }
+}
+
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct DebugStruct {

@@ -1,0 +1,25 @@
+[
+    {
+        "type": "Unit",
+        "name": "Scout",
+        "description": "",
+        "link": "",
+        "class": "Infantry",
+        "power": 6,
+        "range": 1,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0
+    },
+    {
+        "type": "Mod",
+        "name": "Anti Tank Guns",
+        "description": "",
+        "link": "",
+        "power": 0,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 3,
+        "mod_air": 0
+    }
+]

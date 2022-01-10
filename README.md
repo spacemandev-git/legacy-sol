@@ -18,11 +18,14 @@ An in progress RTS game on Solana blockchain using the Anchor framework.
 - "Zombies Mode" with units controlled by Oracle and moved every X second
 - Implement ranged attacks somehow ?
 
-# IC Card Types
+# IC Types
 - Units
 - Unit Mods (applied to deployed Units by you)
 - Location Mods (Search for IC, Damage Unit on Location)
-- Reset Move Charges/Next Move Timer
+- Reset Move Charges/Next Move Timer // Not needed if going on a per unit refresh
+- "Search" for IC, gives a random number. Claim the card with Random Number and Card Template Account, which puts the card in your hand
+- Locations when first scanned should have a higher chance for a rare card than subsequent scans
+ -- Maybe do multiple cards on first scan rather than rarity
 
 
 # Combat

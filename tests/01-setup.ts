@@ -29,7 +29,17 @@ export async function setupInitalState(_gid:string){
   const gameacc = await getPDA([Buffer.from(gameId)], program.programId);
   const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 8),new anchor.BN(0).toArrayLike(Buffer, "be", 8)], program.programId);
 
-  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump,
+  await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump, 
+  {
+    name: "Scout", 
+    link: "scout.json",
+    class: {infantry: {}},
+    power: new anchor.BN(6),
+    range: new anchor.BN(1),
+    modInf: new anchor.BN(0),
+    modArmor: new anchor.BN(0),
+    modAir: new anchor.BN(0)
+  },
     {
       accounts: {
         adminAccount: contractadmin.account,
@@ -52,12 +62,6 @@ export async function setupInitalState(_gid:string){
     }
   })
 
-  await program.rpc.addTroopTemplates(await getTroopList(), {
-    accounts: {
-      game: gameacc.account,
-      authority: provider.wallet.publicKey
-    }
-  })
   console.log("Game Account: ", await program.account.game.fetch(gameacc.account));
 
   //state variables are all outputs that can be used in tests

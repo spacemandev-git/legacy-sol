@@ -1,2 +1,6 @@
-//normally found by searching buildings, have a debug function that an admin can call to mint them to players of a given type
-//ICs can be spawned into the world to modify a location, troops on a location, etc.
+//Create new IC Cards & modify game deck length
+//start a scan for a card on a location
+// redeem a location scan
+// view cards in your hand
+// play a Unit card to an empty location
+// play a Unit Mod to a loc that you own

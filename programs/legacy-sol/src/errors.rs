@@ -31,4 +31,16 @@ pub enum ErrorCode {
 
   #[msg("No friendly fire allowed")]
   NoFriendlyFire,
+
+  #[msg("Scan waiting to be redeemed!")]
+  RedemptionAvailable,
+
+  #[msg("Location is still in cooldown from last scan")]
+  LocationOnCooldown,
+
+  #[msg("Invalid Card Passed In")]
+  InvalidCard,
+
+  #[msg("Mod cannot be applied to Unit.")]
+  InvalidMod,
 }
