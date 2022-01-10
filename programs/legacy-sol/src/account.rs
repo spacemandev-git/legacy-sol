@@ -28,8 +28,8 @@ pub struct Player{
 #[account]
 pub struct Location{ 
     pub game_acc: Pubkey,
-    pub x: i64,
-    pub y: i64,
+    pub x: i16,
+    pub y: i16,
     pub feature: Option<Feature>,
     pub troops: Option<Troop>,
     pub tile_owner: Option<Pubkey>,
@@ -101,8 +101,8 @@ impl Default for CardType {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub struct Coords{
-  pub x:i64,
-  pub y:i64
+  pub x:i16,
+  pub y:i16
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]

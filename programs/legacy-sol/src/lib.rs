@@ -52,7 +52,7 @@ pub mod legacy_sol {
         }        
     }
 
-    pub fn spawn(ctx: Context<SpawnPlayer>, x:i64, y:i64, _bmp:u8) -> ProgramResult {
+    pub fn spawn(ctx: Context<SpawnPlayer>, x:i16, y:i16, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         if !ctx.accounts.game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
@@ -95,7 +95,7 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn init_location(ctx: Context<InitLoc>, x:i64, y:i64, _bmp:u8) -> ProgramResult {
+    pub fn init_location(ctx: Context<InitLoc>, x:i16, y:i16, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         let game = &mut ctx.accounts.game;
         if !game.enabled {
@@ -409,7 +409,7 @@ pub fn get_atk(attacking: &Troop, defending: &Troop, idx:usize) -> u8{
 /*
  * Spawns a random feature on the location
 */
-pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i64, y:i64) {
+pub fn init_loc(loc:&mut Account<Location>, features:&Vec<Feature>, x:i16, y:i16) {
     loc.x = x;
     loc.y = y;
     //loc.feature = Some(features[usize::from(get_random_u8())].clone());

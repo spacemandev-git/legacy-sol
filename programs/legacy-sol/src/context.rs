@@ -52,7 +52,7 @@ pub struct InitPlayer<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(x:i64, y:i64, _bmp:u8)]
+#[instruction(x:i16, y:i16, _bmp:u8)]
 pub struct SpawnPlayer<'info>{
     pub game: Account<'info, Game>,
     pub player: Account<'info, Player>,
@@ -76,7 +76,7 @@ pub struct ModifyGame<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(x:i64, y:i64, _bmp:u8)]
+#[instruction(x:i16, y:i16, _bmp:u8)]
 pub struct InitLoc<'info>{
     #[account(mut)]
     pub game: Account<'info, Game>,
