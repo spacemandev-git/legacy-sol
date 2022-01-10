@@ -28,10 +28,10 @@ pub struct InitGame<'info> {
     )]
     pub game_account: Account<'info, Game>,
     #[account(init,
-        seeds=[id.as_ref(), 0_i64.to_be_bytes().as_ref(), 0_i64.to_be_bytes().as_ref()],
+        seeds=[id.as_ref(), 0_i8.to_be_bytes().as_ref(), 0_i8.to_be_bytes().as_ref()],
         bump=_0_loc_bump,
         payer=admin,
-        space=8+10000
+        space=8+512
     )]
     pub start_location: Account<'info, Location>,
 }

@@ -27,7 +27,7 @@ export async function setupInitalState(_gid:string){
   //initalize the game
   const gameId=_gid;
   const gameacc = await getPDA([Buffer.from(gameId)], program.programId);
-  const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 8),new anchor.BN(0).toArrayLike(Buffer, "be", 8)], program.programId);
+  const startLoc = await getPDA([Buffer.from(gameId), new anchor.BN(0).toArrayLike(Buffer, "be", 1),new anchor.BN(0).toArrayLike(Buffer, "be", 1)], program.programId);
 
   await program.rpc.createGame(gameId, gameacc.bump, provider.wallet.publicKey, startLoc.bump, 
   {
@@ -87,29 +87,4 @@ async function getFeatures(){
 
   }
   return features;
-}
-
-async function getTroopList(){
-  let templates: I.Troop[] = [];
-  let raw = JSON.parse((await fs.readFile('tests/data/troop_templates.json')).toString())
-  const getClass = (cls:string) => {
-    let tClass = {};
-    tClass[cls.toLowerCase()] = {};
-    return tClass;
-  }
-  
-  for (let t of raw){
-    templates.push({
-      name: t.name, 
-      link: t.link,
-      class: getClass(t['class']),
-      power: new anchor.BN(t.power),
-      range: new anchor.BN(t.range),
-      modInf: new anchor.BN(t.mod_inf),
-      modArmor: new anchor.BN(t.mod_armor),
-      modAir: new anchor.BN(t.mod_air)
-    })
-  }
-
-  return templates;
 }

@@ -45,9 +45,9 @@ export async function spawnPlayers(setup:I.Setup, players: I.PDA[]){
       const y = new anchor.BN(i+1)//.toArrayLike(Buffer, "be", 8);
       const cX = new anchor.BN(0)//.toArrayLike(Buffer, "be", 8);
       const cY = new anchor.BN(i)//.toArrayLike(Buffer, "be", 8)
-      const spawn_loc = await getPDA([Buffer.from(setup.gameId),x.toArrayLike(Buffer, "be", 8),y.toArrayLike(Buffer, "be", 8)], setup.program.programId)
-      const connecting_location = await getPDA([Buffer.from(setup.gameId), cX.toArrayLike(Buffer, "be", 8), cY.toArrayLike(Buffer, "be", 8)], setup.program.programId)
-      await setup.program.rpc.spawn(new anchor.BN(0), new anchor.BN(i+1), spawn_loc.bump, {
+      const spawn_loc = await getPDA([Buffer.from(setup.gameId),x.toArrayLike(Buffer, "be", 1),y.toArrayLike(Buffer, "be", 1)], setup.program.programId)
+      const connecting_location = await getPDA([Buffer.from(setup.gameId), cX.toArrayLike(Buffer, "be", 1), cY.toArrayLike(Buffer, "be", 1)], setup.program.programId)
+      await setup.program.rpc.spawn(0, (i+1), spawn_loc.bump, {
         accounts: {
           game: setup.gameacc.account,
           player: players[i].account,

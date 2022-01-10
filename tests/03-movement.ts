@@ -17,12 +17,12 @@ export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
   let locs:I.Locs = {}
   for(let player of Object.keys(spawns)){
     let conn_loc = {
-      x: new anchor.BN(spawns[player].x).toArrayLike(Buffer, "be", 8),
-      y: new anchor.BN(spawns[player].y).toArrayLike(Buffer, "be", 8),
+      x: new anchor.BN(spawns[player].x).toArrayLike(Buffer, "be", 1),
+      y: new anchor.BN(spawns[player].y).toArrayLike(Buffer, "be", 1),
     }
     let new_loc = {
-      x: new anchor.BN(spawns[player].x + 1).toArrayLike(Buffer, "be", 8),
-      y: new anchor.BN(spawns[player].y).toArrayLike(Buffer, "be", 8),
+      x: new anchor.BN(spawns[player].x + 1).toArrayLike(Buffer, "be", 1),
+      y: new anchor.BN(spawns[player].y).toArrayLike(Buffer, "be", 1),
     }
     conn_loc['pda'] = await getPDA([Buffer.from(setup.gameId), conn_loc.x, conn_loc.y], setup.program.programId);
     new_loc['pda'] = await getPDA([Buffer.from(setup.gameId), new_loc.x, new_loc.y], setup.program.programId);
