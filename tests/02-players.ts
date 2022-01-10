@@ -53,7 +53,7 @@ export async function spawnPlayers(setup:I.Setup, players: I.PDA[]){
           player: players[i].account,
           location: spawn_loc.account,
           connectingLoc: connecting_location.account,
-          payer: setup.program.provider.wallet.publicKey,
+          authority: setup.program.provider.wallet.publicKey,
           systemProgram: SystemProgram.programId,
         },
         signers: []

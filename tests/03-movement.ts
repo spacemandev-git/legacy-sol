@@ -29,7 +29,7 @@ export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
     await setup.program.rpc.initalizeLocation(new anchor.BN(spawns[player].x + 1), new anchor.BN(spawns[player].y), new_loc['pda']['bump'], {
       accounts: {
         game: setup.gameacc.account,
-        player: setup.program.provider.wallet.publicKey,
+        authority: setup.program.provider.wallet.publicKey,
         location: new_loc['pda']['account'],
         connectingLoc: conn_loc['pda']['account'],
         systemProgram: SystemProgram.programId
@@ -65,6 +65,7 @@ export async function moveTroops(setup: I.Setup, locs:I.Locs){
       accounts: {
         game: setup.gameacc.account,
         player: player,
+        authority: setup.program.provider.wallet.publicKey,
         from: locs[player].spawn.acc,
         destination: locs[player].adjacent.acc
       }
@@ -94,7 +95,8 @@ export async function testCombatUntilWipe(setup:I.Setup, attackingPlayer: string
       game: setup.gameacc.account,
       from: attackingLoc,
       destination: defendingLoc,
-      player: attackingPlayer
+      player: attackingPlayer,
+      authority: setup.program.provider.wallet.publicKey,
     }
   })
   console.log(`
@@ -113,7 +115,8 @@ export async function testCombatUntilWipe(setup:I.Setup, attackingPlayer: string
       game: setup.gameacc.account,
       from: attackingLoc,
       destination: defendingLoc,
-      player: attackingPlayer
+      player: attackingPlayer,
+      authority: setup.program.provider.wallet.publicKey,
     }
   })
   console.log(`
@@ -132,7 +135,8 @@ export async function testCombatUntilWipe(setup:I.Setup, attackingPlayer: string
       game: setup.gameacc.account,
       from: attackingLoc,
       destination: defendingLoc,
-      player: attackingPlayer
+      player: attackingPlayer,
+      authority: setup.program.provider.wallet.publicKey,
     }
   })
   console.log(`

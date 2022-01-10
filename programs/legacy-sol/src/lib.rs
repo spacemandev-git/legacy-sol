@@ -165,10 +165,12 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn play_card(ctx:Context<PlayCard>, card_idx: usize) -> ProgramResult {
+    pub fn play_card(ctx:Context<PlayCard>, idx: u16) -> ProgramResult {
         let game = &ctx.accounts.game;
         let player = &mut ctx.accounts.player;
         let location = &mut ctx.accounts.location;
+
+        let card_idx = usize::from(idx);
         if !game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
         } 
