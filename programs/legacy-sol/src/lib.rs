@@ -95,9 +95,10 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn initalize_location(ctx: Context<InitLoc>, x:i64, y:i64, _bmp:u8) -> ProgramResult {
+    pub fn init_location(ctx: Context<InitLoc>, x:i64, y:i64, _bmp:u8) -> ProgramResult {
         //check that game is enabled
-        if !ctx.accounts.game.enabled {
+        let game = &mut ctx.accounts.game;
+        if !game.enabled {
             return Err(ErrorCode::GameNotEnabled.into())
         } 
 
@@ -107,10 +108,11 @@ pub mod legacy_sol {
             return Err(ErrorCode::InvalidLocation.into())
         } 
 
-        init_loc(loc, &ctx.accounts.game.features, x, y);
-        loc.game_acc = ctx.accounts.game.key();
+        init_loc(loc, &game.features, x, y);
+        loc.game_acc = game.key();
+        game.locations.push(Coords {x, y});
         emit!(NewLocationInitalized {
-            game_acc: ctx.accounts.game.key(),
+            game_acc: game.key(),
             coords: Coords {x: x, y: y},
             feature:loc.feature.as_ref().unwrap().clone()});
         Ok(())

@@ -26,7 +26,7 @@ export async function initLocBySpawn(setup:I.Setup, spawns:I.SpawnedPlayers){
     }
     conn_loc['pda'] = await getPDA([Buffer.from(setup.gameId), conn_loc.x, conn_loc.y], setup.program.programId);
     new_loc['pda'] = await getPDA([Buffer.from(setup.gameId), new_loc.x, new_loc.y], setup.program.programId);
-    await setup.program.rpc.initalizeLocation(new anchor.BN(spawns[player].x + 1), new anchor.BN(spawns[player].y), new_loc['pda']['bump'], {
+    await setup.program.rpc.initLocation(new anchor.BN(spawns[player].x + 1), new anchor.BN(spawns[player].y), new_loc['pda']['bump'], {
       accounts: {
         game: setup.gameacc.account,
         authority: setup.program.provider.wallet.publicKey,

@@ -11,6 +11,7 @@ pub struct Game {
     pub authority: Pubkey,
     pub enabled: bool,
     pub features: Vec<Feature>,
+    pub locations: Vec<Coords>,
     pub new_player_unit: Troop,
     pub deck_len: u64,
     pub feature_scan_delay: u64 //How long features must go before they can be scanned again
@@ -98,6 +99,11 @@ impl Default for CardType {
     fn default() -> Self { CardType::None }
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub struct Coords{
+  pub x:i64,
+  pub y:i64
+}
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct DebugStruct {

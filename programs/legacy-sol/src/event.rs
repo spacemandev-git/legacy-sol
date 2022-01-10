@@ -39,9 +39,3 @@ pub struct Combat {
   pub atk_dmg: u8,
   pub def_dmg: u8
 }
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
-pub struct Coords{
-  pub x:i64,
-  pub y:i64
-}

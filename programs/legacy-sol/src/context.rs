@@ -31,7 +31,7 @@ pub struct InitGame<'info> {
         seeds=[id.as_ref(), 0_i64.to_be_bytes().as_ref(), 0_i64.to_be_bytes().as_ref()],
         bump=_0_loc_bump,
         payer=admin,
-        space=8+512
+        space=8+10000
     )]
     pub start_location: Account<'info, Location>,
 }
@@ -78,6 +78,7 @@ pub struct ModifyGame<'info> {
 #[derive(Accounts)]
 #[instruction(x:i64, y:i64, _bmp:u8)]
 pub struct InitLoc<'info>{
+    #[account(mut)]
     pub game: Account<'info, Game>,
     #[account(init,
         seeds=[game.id.as_ref(), x.to_be_bytes().as_ref(), y.to_be_bytes().as_ref()],
