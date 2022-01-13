@@ -13,7 +13,7 @@ use errors::*;
 use context::*;
 use event::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("Cz4TVYSDxwobuiKdtZY8ejp3hWL7WfCbPNYGUqnNBVSe");
 
 #[program]
 pub mod legacy_sol {
