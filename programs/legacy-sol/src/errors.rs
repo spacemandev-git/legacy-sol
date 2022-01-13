@@ -43,4 +43,13 @@ pub enum ErrorCode {
 
   #[msg("Mod cannot be applied to Unit.")]
   InvalidMod,
+
+  #[msg("Feature can't be scanned")]
+  FeatureNotScannable,
+
+  #[msg("Unit Mod doesn't match the Unit's class")]
+  InvalidUnitMod,
+
+  #[msg("Unit is still recovering")]
+  UnitRecovering,
 }

@@ -13,8 +13,14 @@ pub struct Game {
     pub features: Vec<Feature>,
     pub locations: Vec<Coords>,
     pub new_player_unit: Troop,
-    pub deck_len: u64,
-    pub feature_scan_delay: u64 //How long features must go before they can be scanned again
+    pub decks: DeckLen,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct DeckLen{
+    pub basic: u64,
+    pub rare: u64,
+    pub legendary: u64
 }
 
 #[account]
@@ -22,7 +28,13 @@ pub struct Player{
     pub name: String,
     pub authority: Pubkey,
     pub cards: Vec<Card>,
-    pub redeemable_cards: Vec<u64>
+    pub redeemable_cards: Vec<RedeemableCard>
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct RedeemableCard{
+    pub drop_table: DropTable,
+    pub id: u64,
 }
 
 #[account]
@@ -36,10 +48,24 @@ pub struct Location{
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct Feature {
-    pub weight: u8,
+    pub drop_table: Option<DropTable>,
+    pub weight: u8, 
     pub name: String,
+    pub scan_recovery: u64,
     pub last_scanned: u64, // slot when this feature was last scanned
     pub times_scanned: u64
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub enum DropTable {
+    None,
+    Basic,
+    Rare,
+    Legendary
+}
+
+impl Default for DropTable {
+    fn default() -> Self {DropTable::None}
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
@@ -52,9 +78,11 @@ pub struct Troop{
     pub mod_inf: i8, 
     pub mod_armor: i8,
     pub mod_air: i8, 
+    pub recovery: u16, //might have *really* slow, really powerful units in the future?
+    pub last_moved: u64
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug, Copy)]
 pub enum TroopClass {
     Infantry,
     Armor,
@@ -65,6 +93,19 @@ impl Default for TroopClass {
     fn default() -> Self { TroopClass::Infantry }
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub struct UnitMod {
+    pub name: String,
+    pub link: String,
+    pub class: Option<TroopClass>,
+    pub range: i8,
+    pub power: i8,
+    pub mod_inf: i8,
+    pub mod_armor: i8,
+    pub mod_air: i8,
+    pub recovery: i8
+}
+
 #[account]
 pub struct CardTemplate{
     pub card: Card
@@ -72,30 +113,24 @@ pub struct CardTemplate{
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub struct Card {
+    pub drop_table: DropTable,
     pub id: u64,
-    pub name: String,
-    pub description: String,
-    pub link: String, //link to image
     pub card_type: CardType,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub enum CardType {
-    None,
+    None, 
     Unit { 
         unit: Troop
     },
     UnitMod {
-        range: i8,
-        power: i8,
-        mod_inf: i8,
-        mod_armor: i8,
-        mod_air: i8
+        umod: UnitMod
     },
 }
 
 impl Default for CardType {
-    fn default() -> Self { CardType::None }
+    fn default() -> Self { CardType::None} 
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]

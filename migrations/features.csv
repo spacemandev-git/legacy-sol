@@ -1,0 +1,5 @@
+name,scan_recovery,weight,link,drop_table
+blank_space,u64::MAX,100,none,none
+ruins,250,180,ruins.png,basic
+village,500,225,hut.png,rare
+city,1000,255,city.png,legendary
