@@ -1,0 +1,30 @@
+[
+    {
+        "name": "blank_space",
+        "scan_recovery": 0,
+        "weight": 100,
+        "link": "none",
+        "drop_table": "none"
+    },
+    {
+        "name": "ruins",
+        "scan_recovery": 250,
+        "weight": 180,
+        "link": "ruins.png",
+        "drop_table": "basic"
+    },
+    {
+        "name": "village",
+        "scan_recovery": 500,
+        "weight": 225,
+        "link": "hut.png",
+        "drop_table": "rare"
+    },
+    {
+        "name": "city",
+        "scan_recovery": 1000,
+        "weight": 255,
+        "link": "city.png",
+        "drop_table": "legendary"
+    }
+]

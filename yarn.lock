@@ -128,10 +128,10 @@
   "resolved" "https://registry.npmjs.org/@types/mocha/-/mocha-9.0.0.tgz"
   "version" "9.0.0"
 
-"@types/node@*":
-  "integrity" "sha512-1QUk+WAUD4t8iR+Oj+UgI8oJa6yyxaB8a8pHaC8uqM6RrS1qbL7bf3Pwl5rHv0psm2CuDErgho6v5N+G+5fwtQ=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-17.0.7.tgz"
-  "version" "17.0.7"
+"@types/node@*", "@types/node@^17.0.8":
+  "integrity" "sha512-YofkM6fGv4gDJq78g4j0mMuGMkZVxZDgtU0JRdx6FgiJDG+0fY0GKVolOV8WqVmEhLCXkQRjwDdKyPxJp/uucg=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-17.0.8.tgz"
+  "version" "17.0.8"
 
 "@types/node@^12.12.54":
   "integrity" "sha512-RX6hFa0hxkFuktu5629zJEkWK5e0HreW4vpNSLn4nWkOui7CTGCjtKiKpvtZ4QwCZ2Am5uhrb5ULHKNyunYYqg=="
@@ -349,7 +349,6 @@
   dependencies:
     "anymatch" "~3.1.2"
     "braces" "~3.0.2"
-    "fsevents" "~2.3.2"
     "glob-parent" "~5.1.2"
     "is-binary-path" "~2.1.0"
     "is-glob" "~4.0.1"
@@ -405,6 +404,11 @@
   "integrity" "sha512-lyAZ0EMyjDkVvz8WOeVnuCPvKVBXcMv1l5SVqO1yC7PzTwrD/pPje/BIRbWhMoPe436U+Y2nD7f5bFx0kt+Sbg=="
   "resolved" "https://registry.npmjs.org/crypto-hash/-/crypto-hash-1.3.0.tgz"
   "version" "1.3.0"
+
+"csv-parse@^5.0.4":
+  "integrity" "sha512-5AIdl8l6n3iYQYxan5djB5eKDa+vBnhfWZtRpJTcrETWfVLYN0WSj3L9RwvgYt+psoO77juUr8TG8qpfGZifVQ=="
+  "resolved" "https://registry.npmjs.org/csv-parse/-/csv-parse-5.0.4.tgz"
+  "version" "5.0.4"
 
 "debug@4.3.2":
   "integrity" "sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw=="
@@ -931,10 +935,8 @@
   "version" "7.4.16"
   dependencies:
     "@babel/runtime" "^7.11.2"
-    "bufferutil" "^4.0.1"
     "circular-json" "^0.5.9"
     "eventemitter3" "^4.0.7"
-    "utf-8-validate" "^5.0.2"
     "uuid" "^8.3.0"
     "ws" "^7.4.5"
   optionalDependencies:
@@ -1061,7 +1063,6 @@
   "version" "8.0.0"
   dependencies:
     "ts-node" "7.0.1"
-    "tsconfig-paths" "^3.5.0"
   optionalDependencies:
     "tsconfig-paths" "^3.5.0"
 

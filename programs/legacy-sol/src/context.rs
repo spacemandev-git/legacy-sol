@@ -2,22 +2,21 @@ use anchor_lang::prelude::*;
 use crate::account::*;
 
 #[derive(Accounts)]
-#[instruction(id: String, _bump:u8, admin_pk: Pubkey, _0_loc_bump:u8)]
+#[instruction(id: String, _bump:u8, _0_loc_bump:u8, player_spawn_troop:Troop)]
 pub struct InitGame<'info> {
-    pub admin_account: Account<'info, Admin>,
-    pub admin: Signer<'info>,
+    pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
     #[account(init,
         seeds=[id.as_ref()],
         bump=_bump, 
-        payer=admin, 
+        payer=authority, 
         space=8+10000
     )]
     pub game_account: Account<'info, Game>,
     #[account(init,
         seeds=[id.as_ref(), 0_i8.to_be_bytes().as_ref(), 0_i8.to_be_bytes().as_ref()],
         bump=_0_loc_bump,
-        payer=admin,
+        payer=authority,
         space=8+512
     )]
     pub start_location: Account<'info, Location>,
@@ -92,17 +91,17 @@ pub struct MoveOrAttack<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(id:u64, _bmp:u8)]
+#[instruction(card:Card, _bmp:u8)]
 pub struct InitCard<'info>{
     #[account(mut, has_one=authority)]
     pub game: Account<'info, Game>,
     #[account(init,
-        seeds=[game.id.as_ref(), id.to_be_bytes().as_ref()],
+        seeds=[game.id.as_ref(), card.id.to_be_bytes().as_ref()],
         bump=_bmp,
-        space=8+512,
+        space=8+1024,
         payer = authority
     )]
-    pub card: Account<'info, CardTemplate>,
+    pub card_acc: Account<'info, CardTemplate>,
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>
 }

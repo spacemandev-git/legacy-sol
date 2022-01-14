@@ -19,15 +19,15 @@ declare_id!("Cz4TVYSDxwobuiKdtZY8ejp3hWL7WfCbPNYGUqnNBVSe");
 pub mod legacy_sol {
     use super::*;
 
-    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, admin_pk: Pubkey, _0_loc_bump:u8, player_spawn_troop:Troop) -> ProgramResult {
+    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, _0_loc_bump:u8, player_spawn_troop:Troop) -> ProgramResult {
         let game_account = &mut ctx.accounts.game_account;
         game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
-        game_account.authority = admin_pk;
+        game_account.authority = ctx.accounts.authority.key();
         game_account.id = id.clone();
         game_account.new_player_unit = player_spawn_troop;
         //game_account.features = features;
         //game_account.troop_templates = troop_list;
-        emit!(NewGame {game_id: id.clone(), game_admin: admin_pk});
+        emit!(NewGame {game_id: id.clone(), game_admin: ctx.accounts.authority.key()});
         Ok(())
     
     }
@@ -82,7 +82,7 @@ pub mod legacy_sol {
     }
 
     pub fn init_card(ctx: Context<InitCard>, card: Card, _bmp:u8) -> ProgramResult {
-        ctx.accounts.card.card = card.clone();
+        ctx.accounts.card_acc.card = card.clone();
         match card.drop_table {
             DropTable::Basic => ctx.accounts.game.decks.basic += 1,
             DropTable::Rare => ctx.accounts.game.decks.rare += 1,
@@ -298,7 +298,7 @@ pub mod legacy_sol {
             return Err(ErrorCode::DestinationOccupied.into());
         }
 
-        let from_troops = from.troops.as_ref().unwrap().clone();
+        let mut from_troops = from.troops.as_ref().unwrap().clone();
         let next_valid_move_slot:u64 = from_troops.last_moved.saturating_add(from_troops.recovery.into());
         let clock = Clock::get().unwrap();
         if clock.slot < next_valid_move_slot {
@@ -307,6 +307,7 @@ pub mod legacy_sol {
 
 
         //Move the troops
+        from_troops.last_moved = clock.slot;
         dest.troops = Some(from_troops);
         from.troops = None;
         dest.tile_owner = Some(player.key());
@@ -354,13 +355,13 @@ pub mod legacy_sol {
             return Err(ErrorCode::NoTroopsOnTarget.into())
         }
         
-        let from_troops = from.troops.as_ref().unwrap().clone();
+        let mut from_troops = from.troops.as_ref().unwrap().clone();
         let next_valid_move_slot:u64 = from_troops.last_moved.saturating_add(from_troops.recovery.into());
         let clock = Clock::get().unwrap();
         if clock.slot < next_valid_move_slot {
             return Err(ErrorCode::UnitRecovering.into())
         }
-
+        from_troops.last_moved = clock.slot;
         //Check the distance between the two locations is less than or equal to the range of the attacking troops
         let distance:f64 = (((dest.coords.x - from.coords.x).pow(2) + (dest.coords.y - from.coords.y).pow(2)) as f64).sqrt();
         let unit_range = from.troops.as_ref().unwrap().range;

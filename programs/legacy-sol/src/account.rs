@@ -1,11 +1,6 @@
 use anchor_lang::prelude::*;
 
 #[account]
-pub struct Admin {
-    pub key: Pubkey,
-}
-
-#[account]
 pub struct Game {
     pub id: String,
     pub authority: Pubkey,
