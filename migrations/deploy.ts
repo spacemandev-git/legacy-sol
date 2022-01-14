@@ -216,7 +216,7 @@ export interface TroopAndMod{
   drop_table: "none" | "basic" | "rare" | "legendary",
   name: string,
   link: string,
-  class: "Infantry" | "Armor" | "Air",
+  class: "Infantry" | "Armor" | "Aircraft",
   power: number,
   range: number,
   recovery: number,
