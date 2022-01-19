@@ -19,14 +19,34 @@ declare_id!("Cz4TVYSDxwobuiKdtZY8ejp3hWL7WfCbPNYGUqnNBVSe");
 pub mod legacy_sol {
     use super::*;
 
-    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, _0_loc_bump:u8, player_spawn_troop:Troop) -> ProgramResult {
+    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, _0_loc_bump:u8, starting_card:Card) -> ProgramResult {
         let game_account = &mut ctx.accounts.game_account;
         game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
         game_account.authority = ctx.accounts.authority.key();
         game_account.id = id.clone();
-        game_account.new_player_unit = player_spawn_troop;
+        game_account.starting_card = starting_card;
         //game_account.features = features;
         //game_account.troop_templates = troop_list;
+        
+        let start_loc = &mut ctx.accounts.start_location;
+        //give it a feature
+        start_loc.game_acc = game_account.key();
+        start_loc.coords = Coords {x:0, y:0};
+        start_loc.feature = Some(Feature {
+            drop_table: Some(DropTable::None),
+            link: "none.png".to_string(),
+            weight: 100,
+            name: "blank_space".to_string(),
+            scan_recovery: 0,
+            last_scanned: 0,
+            times_scanned: 0
+        });
+        start_loc.troops = None;
+        start_loc.tile_owner = None;
+        //add it to game locs 
+        game_account.locations.push(Coords {x:0, y:0});
+
+
         emit!(NewGame {game_id: id.clone(), game_admin: ctx.accounts.authority.key()});
         Ok(())
     
@@ -38,12 +58,15 @@ pub mod legacy_sol {
             return Err(ErrorCode::GameNotEnabled.into())
         } else {
             let player_acc = &mut ctx.accounts.player_account;
-            player_acc.authority = ctx.accounts.payer.key();
+            player_acc.authority = ctx.accounts.player.key();
             player_acc.name = name;
+            player_acc.cards = vec![ctx.accounts.game.starting_card.clone()];
+            player_acc.redeemable_cards = vec![];
             Ok(())
         }        
     }
-
+    
+    /*
     pub fn spawn(ctx: Context<SpawnPlayer>, x:i8, y:i8, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         if !ctx.accounts.game.enabled {
@@ -74,6 +97,7 @@ pub mod legacy_sol {
             }
         }
     }
+    */
 
     pub fn add_features(ctx: Context<ModifyGame>, new_features: Vec<Feature>) -> ProgramResult {
         let game = &mut ctx.accounts.game;

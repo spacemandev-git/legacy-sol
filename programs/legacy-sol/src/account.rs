@@ -7,7 +7,7 @@ pub struct Game {
     pub enabled: bool,
     pub features: Vec<Feature>,
     pub locations: Vec<Coords>,
-    pub new_player_unit: Troop,
+    pub starting_card: Card,
     pub decks: DeckLen,
 }
 
@@ -44,6 +44,7 @@ pub struct Location{
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct Feature {
     pub drop_table: Option<DropTable>,
+    pub link: String,
     pub weight: u8, 
     pub name: String,
     pub scan_recovery: u64,

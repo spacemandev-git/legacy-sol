@@ -28,12 +28,11 @@ pub struct InitPlayer<'info> {
     pub game: Account<'info, Game>,                                                                                     
     #[account(init,
         seeds=[game.id.as_ref(), player.key().as_ref()], bump=_bump,
-        payer=payer,
+        payer=player,
         space=8+10000
     )]
     pub player_account: Account<'info, Player>,
     pub player: Signer<'info>,
-    pub payer: Signer<'info>,
     pub system_program: Program<'info, System>
 }
 

@@ -3,7 +3,7 @@
         "name": "blank_space",
         "scan_recovery": 0,
         "weight": 100,
-        "link": "none",
+        "link": "none.png",
         "drop_table": "none"
     },
     {

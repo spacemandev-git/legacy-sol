@@ -8,7 +8,7 @@ import NodeWallet from './NodeWallet';
 import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 // Make assumption that program has been deployed using Solana program deploy
 
-export async function createGame(name:string){
+async function createGame(name:string){
   if(!name){
     console.log("Please pass in a Game Name");
     return;
@@ -207,6 +207,10 @@ async function transformCSV(){
   //UnitMods
   const mods = await getJSON('migrations/assets/unit_mods.csv');
   await fs.writeFile('migrations/assets/unit_mods.json', JSON.stringify(mods));
+}
+
+async function debug(){
+  
 }
 
 //transformCSV();
