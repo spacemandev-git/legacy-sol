@@ -1,0 +1,13 @@
+drop_table,name,link,class,power,range,recovery,mod_inf,mod_armor,mod_air
+basic,Drone,drone_1.png,Aircraft,2,1,10,0,0,0
+basic,Imperial Infantry,balkania_1.png,Infantry,6,1,20,-1,0,1
+basic,Wild Troop,enclave_1.png,Infantry,6,1,20,2,-1,0
+basic,Infantry,khan_1.png,Infantry,6,1,20,0,0,0
+basic,Scout,saharan_1.png,Infantry,4,1,15,0,0,0
+legendary,Jet,jet_1.png,Aircraft,20,3,10,0,0,0
+legendary,Artillery,mechaniker_3.png,Armor,15,3,40,0,1,0
+rare,Imperial Tanks,balkania_3.png,Armor,15,2,40,0,0,0
+rare,Wild Bears,enclave_3.png,Armor,12,1,30,3,-1,-1
+rare,Mech,khan_3.png,Armor,15,1,40,-1,2,-1
+rare,Raider,saharan_3.png,Armor,8,1,15,0,-1,1
+rare,Mechanized Infantry,mechaniker_1.png,Infantry,10,1,25,-1,1,1

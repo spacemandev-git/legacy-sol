@@ -18,26 +18,38 @@ declare_id!("Cz4TVYSDxwobuiKdtZY8ejp3hWL7WfCbPNYGUqnNBVSe");
 #[program]
 pub mod legacy_sol {
     use super::*;
-    pub fn initialize(ctx: Context<Initialize>, _bump:u8) -> ProgramResult {
-        let admin_acc = &mut ctx.accounts.admin_account;
-        admin_acc.key = ctx.accounts.admin.key();
-        Ok(())
-    }
 
-    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, admin_pk: Pubkey, _0_loc_bump:u8, player_spawn_troop:Troop) -> ProgramResult {
-        if ctx.accounts.admin_account.key != ctx.accounts.admin.key() {
-            return Err(ErrorCode::Unauthorized.into())
-        } else {
-            let game_account = &mut ctx.accounts.game_account;
-            game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
-            game_account.authority = admin_pk;
-            game_account.id = id.clone();
-            game_account.new_player_unit = player_spawn_troop;
-            //game_account.features = features;
-            //game_account.troop_templates = troop_list;
-            emit!(NewGame {game_id: id.clone(), game_admin: admin_pk});
-            Ok(())
-        }
+    pub fn create_game(ctx: Context<InitGame>, id:String, _bump:u8, _0_loc_bump:u8, starting_card:Card) -> ProgramResult {
+        let game_account = &mut ctx.accounts.game_account;
+        game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
+        game_account.authority = ctx.accounts.authority.key();
+        game_account.id = id.clone();
+        game_account.starting_card = starting_card;
+        //game_account.features = features;
+        //game_account.troop_templates = troop_list;
+        
+        let start_loc = &mut ctx.accounts.start_location;
+        //give it a feature
+        start_loc.game_acc = game_account.key();
+        start_loc.coords = Coords {x:0, y:0};
+        start_loc.feature = Some(Feature {
+            drop_table: Some(DropTable::None),
+            link: "none.png".to_string(),
+            weight: 100,
+            name: "blank_space".to_string(),
+            scan_recovery: 0,
+            last_scanned: 0,
+            times_scanned: 0
+        });
+        start_loc.troops = None;
+        start_loc.tile_owner = None;
+        //add it to game locs 
+        game_account.locations.push(Coords {x:0, y:0});
+
+
+        emit!(NewGame {game_id: id.clone(), game_admin: ctx.accounts.authority.key()});
+        Ok(())
+    
     }
 
     pub fn init_player(ctx: Context<InitPlayer>, _bump:u8, name: String) -> ProgramResult {
@@ -46,12 +58,15 @@ pub mod legacy_sol {
             return Err(ErrorCode::GameNotEnabled.into())
         } else {
             let player_acc = &mut ctx.accounts.player_account;
-            player_acc.authority = ctx.accounts.payer.key();
+            player_acc.authority = ctx.accounts.player.key();
             player_acc.name = name;
+            player_acc.cards = vec![ctx.accounts.game.starting_card.clone()];
+            player_acc.redeemable_cards = vec![];
             Ok(())
         }        
     }
-
+    
+    /*
     pub fn spawn(ctx: Context<SpawnPlayer>, x:i8, y:i8, _bmp:u8) -> ProgramResult {
         //check that game is enabled
         if !ctx.accounts.game.enabled {
@@ -82,6 +97,7 @@ pub mod legacy_sol {
             }
         }
     }
+    */
 
     pub fn add_features(ctx: Context<ModifyGame>, new_features: Vec<Feature>) -> ProgramResult {
         let game = &mut ctx.accounts.game;
@@ -89,9 +105,14 @@ pub mod legacy_sol {
         Ok(())
     }
 
-    pub fn init_card(ctx: Context<InitCard>, card: CardTemplate, _bmp:u8) -> ProgramResult {
-        ctx.accounts.card.set_inner(card);
-        ctx.accounts.game.deck_len += 1;
+    pub fn init_card(ctx: Context<InitCard>, card: Card, _bmp:u8) -> ProgramResult {
+        ctx.accounts.card_acc.card = card.clone();
+        match card.drop_table {
+            DropTable::Basic => ctx.accounts.game.decks.basic += 1,
+            DropTable::Rare => ctx.accounts.game.decks.rare += 1,
+            DropTable::Legendary => ctx.accounts.game.decks.legendary += 1,
+            _ => {}
+        }
         Ok(())
     }
 
@@ -136,30 +157,49 @@ pub mod legacy_sol {
         }        
 
         let mut feature = location.feature.as_ref().unwrap().clone();
+        if feature.drop_table == None {
+            return Err(ErrorCode::FeatureNotScannable.into());
+        }
+
         //check current slot > last_scanned+feature_scan_delay OR last scan == 0
-        let next_scan = feature.last_scanned + game.feature_scan_delay;
+        let next_scan = feature.last_scanned + feature.scan_recovery;
         let clock = Clock::get().unwrap();
-        if next_scan < clock.slot && feature.last_scanned != 0 {
+
+        if next_scan < clock.slot {
             return Err(ErrorCode::LocationOnCooldown.into())
         }
 
         //give the player cards
-        player.redeemable_cards.push(get_random_u64(game.deck_len));
+        match feature.drop_table {
+            Some(DropTable::Basic) => player.redeemable_cards.push(RedeemableCard {
+                drop_table: DropTable::Basic,
+                id: get_random_u64(game.decks.basic)
+            }),
+            Some(DropTable::Rare) => player.redeemable_cards.push(RedeemableCard {
+                drop_table: DropTable::Rare,
+                id: get_random_u64(game.decks.rare)
+            }), 
+            Some(DropTable::Legendary) => player.redeemable_cards.push(RedeemableCard {
+                drop_table: DropTable::Legendary,
+                id: get_random_u64(game.decks.legendary)
+            }),
+            _ => {}
+        }
+
 
         //set the feature's last scan to now, to be redeemed when delay has passed
         feature.last_scanned = clock.slot;
         feature.times_scanned += 1;
         location.feature = Some(feature);
         
-        //TODO
         Ok(())
     }
 
     pub fn redeem(ctx:Context<Redeem>) -> ProgramResult {
         let player = &mut ctx.accounts.player;
         let card = &ctx.accounts.card;
-        let redeemable_id = player.redeemable_cards.pop().unwrap();
-        if card.card.id == redeemable_id {
+        let redeemable_card = player.redeemable_cards.pop().unwrap();
+        if card.card.id == redeemable_card.id && redeemable_card.drop_table == card.card.drop_table {
             player.cards.push(card.card.clone());
         } else {
             return Err(ErrorCode::InvalidCard.into())
@@ -193,11 +233,7 @@ pub mod legacy_sol {
                 location.tile_owner = Some(player.key());
             },
             CardType::UnitMod {
-                range,
-                power, 
-                mod_inf,
-                mod_armor,
-                mod_air
+                umod
             } => {
                 //check location has troops
                 if location.troops == None {
@@ -208,30 +244,42 @@ pub mod legacy_sol {
                     return Err(ErrorCode::PlayerLacksOwnership.into())
                 }
                 //modify troop based on UnitMod
-                let mut modifed_troops = location.troops.as_ref().unwrap().clone();
+                let mut modified_troops = location.troops.as_ref().unwrap().clone();
                 
-                if range < 0 {
-                    modifed_troops.range = modifed_troops.range.saturating_sub(range.abs().try_into().unwrap());
-                } else {
-                    modifed_troops.range = modifed_troops.range.saturating_add(range.abs().try_into().unwrap());
+                //check that the UnitMod class is None or matches troops
+                if umod.class != Some(modified_troops.class) || umod.class != None {
+                    return Err(ErrorCode::InvalidUnitMod.into());
                 }
-                if modifed_troops.range < 1 {
+
+
+                if umod.range < 0 {
+                    modified_troops.range = modified_troops.range.saturating_sub(umod.range.abs().try_into().unwrap());
+                } else {
+                    modified_troops.range = modified_troops.range.saturating_add(umod.range.abs().try_into().unwrap());
+                }
+                if modified_troops.range < 1 {
                     return Err(ErrorCode::InvalidMod.into())
                 }
 
-                if power < 0 {
-                    modifed_troops.power = modifed_troops.power.saturating_sub(power.abs().try_into().unwrap());
+                if umod.power < 0 {
+                    modified_troops.power = modified_troops.power.saturating_sub(umod.power.abs().try_into().unwrap());
                 } else {
-                    modifed_troops.power = modifed_troops.power.saturating_add(power.abs().try_into().unwrap());
+                    modified_troops.power = modified_troops.power.saturating_add(umod.power.abs().try_into().unwrap());
                 }
-                if modifed_troops.power < 1 {
+                if modified_troops.power < 1 {
                     return Err(ErrorCode::InvalidMod.into())
                 }
 
-                modifed_troops.mod_inf = modifed_troops.mod_inf.saturating_add(mod_inf);
-                modifed_troops.mod_armor = modifed_troops.mod_armor.saturating_add(mod_armor);
-                modifed_troops.mod_air = modifed_troops.mod_air.saturating_add(mod_air);
-                location.troops = Some(modifed_troops);
+                if umod.recovery < 0 {
+                    modified_troops.recovery = modified_troops.recovery.saturating_sub(umod.recovery.abs().try_into().unwrap());
+                } else {
+                    modified_troops.recovery = modified_troops.recovery.saturating_add(umod.recovery.abs().try_into().unwrap());
+                }
+
+                modified_troops.mod_inf = modified_troops.mod_inf.saturating_add(umod.mod_inf);
+                modified_troops.mod_armor = modified_troops.mod_armor.saturating_add(umod.mod_armor);
+                modified_troops.mod_air = modified_troops.mod_air.saturating_add(umod.mod_air);
+                location.troops = Some(modified_troops);
             },
             CardType::None => {}
         }
@@ -273,8 +321,18 @@ pub mod legacy_sol {
         if dest.troops != None {
             return Err(ErrorCode::DestinationOccupied.into());
         }
+
+        let mut from_troops = from.troops.as_ref().unwrap().clone();
+        let next_valid_move_slot:u64 = from_troops.last_moved.saturating_add(from_troops.recovery.into());
+        let clock = Clock::get().unwrap();
+        if clock.slot < next_valid_move_slot {
+            return Err(ErrorCode::UnitRecovering.into())
+        }
+
+
         //Move the troops
-        dest.troops = from.troops.clone();
+        from_troops.last_moved = clock.slot;
+        dest.troops = Some(from_troops);
         from.troops = None;
         dest.tile_owner = Some(player.key());
         from.tile_owner = None;
@@ -320,14 +378,21 @@ pub mod legacy_sol {
         if dest.troops == None {
             return Err(ErrorCode::NoTroopsOnTarget.into())
         }
-
+        
+        let mut from_troops = from.troops.as_ref().unwrap().clone();
+        let next_valid_move_slot:u64 = from_troops.last_moved.saturating_add(from_troops.recovery.into());
+        let clock = Clock::get().unwrap();
+        if clock.slot < next_valid_move_slot {
+            return Err(ErrorCode::UnitRecovering.into())
+        }
+        from_troops.last_moved = clock.slot;
         //Check the distance between the two locations is less than or equal to the range of the attacking troops
         let distance:f64 = (((dest.coords.x - from.coords.x).pow(2) + (dest.coords.y - from.coords.y).pow(2)) as f64).sqrt();
         let unit_range = from.troops.as_ref().unwrap().range;
         if distance > unit_range.into() {
             return Err(ErrorCode::DistanceExceedsTroopRange.into())
         }
-        let mut atk_troops = from.troops.as_ref().unwrap().clone();
+        let mut atk_troops = from_troops;
         let mut def_troops = dest.troops.as_ref().unwrap().clone();
 
         if atk_troops.range == 1 {

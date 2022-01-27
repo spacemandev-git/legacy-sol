@@ -1,0 +1,122 @@
+[
+    {
+        "drop_table": "legendary",
+        "name": ".50 Cal Rifle",
+        "link": "infantry_plus.png",
+        "class": "Infantry",
+        "power": 0,
+        "range": 1,
+        "mod_inf": 0,
+        "mod_armor": 1,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "rare",
+        "name": "Anti Tank Gun",
+        "link": "infantry_plus.png",
+        "class": "Infantry",
+        "power": 0,
+        "range": 2,
+        "mod_inf": -1,
+        "mod_armor": 2,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "rare",
+        "name": "S2A Missle",
+        "link": "infantry_plus.png",
+        "class": "Infantry",
+        "power": 0,
+        "range": 0,
+        "mod_inf": -1,
+        "mod_armor": -1,
+        "mod_air": 3,
+        "recovery": 0
+    },
+    {
+        "drop_table": "rare",
+        "name": "Shield Generator",
+        "link": "armor_plus.png",
+        "class": "Armor",
+        "power": 2,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 2
+    },
+    {
+        "drop_table": "rare",
+        "name": "Heavy Armor",
+        "link": "armor_plus.png",
+        "class": "Armor",
+        "power": 5,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 5
+    },
+    {
+        "drop_table": "legendary",
+        "name": "Advanced Fuel",
+        "link": "air_plus.png",
+        "class": "Aircraft",
+        "power": 2,
+        "range": 1,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "legendary",
+        "name": "HEAT Missles",
+        "link": "air_plus.png",
+        "class": "Aircraft",
+        "power": 1,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 2,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "legendary",
+        "name": "Case of Redbull",
+        "link": "infantry_plus.png",
+        "class": "Infantry",
+        "power": 3,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "rare",
+        "name": "Repairs",
+        "link": "armor_plus.png",
+        "class": "Armor",
+        "power": 1,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 0
+    },
+    {
+        "drop_table": "basic",
+        "name": "Bandages",
+        "link": "infantry_plus.png",
+        "class": "Infantry",
+        "power": 1,
+        "range": 0,
+        "mod_inf": 0,
+        "mod_armor": 0,
+        "mod_air": 0,
+        "recovery": 2
+    }
+]

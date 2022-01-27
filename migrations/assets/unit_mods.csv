@@ -1,0 +1,11 @@
+drop_table,name,link,class,power,range,mod_inf,mod_armor,mod_air,recovery
+legendary,.50 Cal Rifle,infantry_plus.png,Infantry,0,1,0,1,0,0
+rare,Anti Tank Gun,infantry_plus.png,Infantry,0,2,-1,2,0,0
+rare,S2A Missle,infantry_plus.png,Infantry,0,0,-1,-1,3,0
+rare,Shield Generator,armor_plus.png,Armor,2,0,0,0,0,2
+rare,Heavy Armor,armor_plus.png,Armor,5,0,0,0,0,5
+legendary,Advanced Fuel,air_plus.png,Aircraft,2,1,0,0,0,0
+legendary,HEAT Missles,air_plus.png,Aircraft,1,0,0,2,0,0
+legendary,Case of Redbull,infantry_plus.png,Infantry,3,0,0,0,0,0
+rare,Repairs,armor_plus.png,Armor,1,0,0,0,0,0
+basic,Bandages,infantry_plus.png,Infantry,1,0,0,0,0,2
