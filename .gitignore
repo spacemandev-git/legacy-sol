@@ -4,3 +4,6 @@
 target
 **/*.rs.bk
 node_modules
+migrations/game_acc.json
+migrations/game_admin.key
+.idea/*

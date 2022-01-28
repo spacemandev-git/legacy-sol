@@ -117,6 +117,7 @@ pub struct Scan<'info> {
 
 #[derive(Accounts)]
 pub struct Redeem<'info>{
+    pub game: Account<'info, Game>,
     #[account(mut, has_one=authority)]
     pub player: Account<'info, Player>,
     pub authority: Signer<'info>,

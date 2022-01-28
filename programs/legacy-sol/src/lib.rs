@@ -163,11 +163,18 @@ pub mod legacy_sol {
     }
 
     pub fn redeem(ctx:Context<Redeem>) -> ProgramResult {
+        let game = &ctx.accounts.game;
         let player = &mut ctx.accounts.player;
         let card = &ctx.accounts.card;
         let redeemable_card = player.redeemable_cards.pop().unwrap();
         if card.card.id == redeemable_card.id && redeemable_card.drop_table == card.card.drop_table {
             player.cards.push(card.card.clone());
+
+            emit!(CardRedeemed {
+                game_acc: game.key(),
+                player: player.key(),
+                card_redeemed: card.card.clone()
+            })
         } else {
             return Err(ErrorCode::InvalidCard.into())
         }
@@ -198,6 +205,12 @@ pub mod legacy_sol {
                 location.troops = Some(unit.clone());
                 //set location owner to player
                 location.tile_owner = Some(player.key());
+
+                emit!(UnitSpawned {
+                    game_acc: game.key(),
+                    player: player.key(),
+                    unit: unit.clone()
+                })
             },
             CardType::UnitMod {
                 umod
@@ -247,6 +260,12 @@ pub mod legacy_sol {
                 modified_troops.mod_armor = modified_troops.mod_armor.saturating_add(umod.mod_armor);
                 modified_troops.mod_air = modified_troops.mod_air.saturating_add(umod.mod_air);
                 location.troops = Some(modified_troops);
+
+                emit!(UnitModded {
+                    game_acc: game.key(),
+                    player: player.key(),
+                    unit_mod: umod.clone()
+                })
             },
             CardType::None => {}
         }
@@ -398,7 +417,16 @@ pub mod legacy_sol {
         } else {
             let atk_atk = get_atk(&atk_troops, &def_troops, 0);
             if def_troops.power.checked_sub(atk_atk) == None {
-                //atk troops wiped out
+                //defense troops wiped out
+                emit!(TroopsDeath {
+                    game_acc: game.key(),
+                    dead_troop_player_acc: dest.tile_owner.as_ref().unwrap().key(),
+                    killer_troop_player_acc: from.tile_owner.as_ref().unwrap().key(),
+                    dead_troops: dest.troops.as_ref().unwrap().clone(),
+                    killer_troops: from.troops.as_ref().unwrap().clone(),
+                    troop_tile: Coords {x: dest.coords.x, y: dest.coords.y}
+                });
+
                 dest.troops = None;
                 dest.tile_owner = None;
             } else {
