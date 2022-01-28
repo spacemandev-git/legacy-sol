@@ -49,8 +49,12 @@ async function createGame(name:string){
     modArmor: new anchor.BN(unit.mod_armor),
     modAir: new anchor.BN(unit.mod_air)
   }
-
-  await game.rpc.createGame(name, new anchor.BN(game_bmp), new anchor.BN(start_loc_bmp), rust_starting_unit, {
+  const starting_card = {
+    dropTable: {"basic": {}},
+    id: new anchor.BN(0),
+    cardType: {"unit": rust_starting_unit}
+  }
+  await game.rpc.createGame(name, new anchor.BN(game_bmp), new anchor.BN(start_loc_bmp), starting_card, {
     accounts: {
       authority: provider.wallet.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,

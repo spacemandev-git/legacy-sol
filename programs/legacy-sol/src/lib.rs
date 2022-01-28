@@ -65,39 +65,6 @@ pub mod legacy_sol {
             Ok(())
         }        
     }
-    
-    /*
-    pub fn spawn(ctx: Context<SpawnPlayer>, x:i8, y:i8, _bmp:u8) -> ProgramResult {
-        //check that game is enabled
-        if !ctx.accounts.game.enabled {
-            return Err(ErrorCode::GameNotEnabled.into())
-        } else {
-            //Check the location is null but has atleast one touching existing location
-            let c_loc = &ctx.accounts.connecting_loc.coords;
-            if c_loc.x < x-1 || c_loc.x > x+1 || c_loc.y < y-1 || c_loc.y > y+1{
-                return Err(ErrorCode::InvalidLocation.into())
-            } else {
-                //Initialize Location
-                let loc = &mut ctx.accounts.location;
-                let features = &ctx.accounts.game.features;
-                //loc.x = x;
-                //loc.y = y; 
-                init_loc(loc, features, x, y);
-                //Spawn Infantry Unit on starting location
-                loc.troops = Some(ctx.accounts.game.new_player_unit.clone());
-                //Set Tile Owner to Player Account
-                loc.tile_owner = Some(ctx.accounts.player.key());
-                loc.game_acc = ctx.accounts.game.key();
-                emit!(NewPlayerSpawn {
-                    game_acc:ctx.accounts.game.key(), 
-                    player: ctx.accounts.player.key(), 
-                    coords: Coords {x:x, y:y}
-                });
-                Ok(())
-            }
-        }
-    }
-    */
 
     pub fn add_features(ctx: Context<ModifyGame>, new_features: Vec<Feature>) -> ProgramResult {
         let game = &mut ctx.accounts.game;
