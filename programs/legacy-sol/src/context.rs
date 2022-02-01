@@ -23,7 +23,7 @@ pub struct InitGame<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(_bump:u8)]
+#[instruction(_bump:u8, name:String)]
 pub struct InitPlayer<'info> {
     pub game: Account<'info, Game>,                                                                                     
     #[account(init,
@@ -137,3 +137,5 @@ pub struct PlayCard<'info>{
 pub struct Debug {
 
 }
+
+
