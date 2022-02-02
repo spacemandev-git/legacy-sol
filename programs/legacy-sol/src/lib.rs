@@ -24,7 +24,8 @@ pub mod legacy_sol {
         game_account.enabled = true; //TODO: Default to False and then change it via functions. For debug purposes we'll just enable the game
         game_account.authority = ctx.accounts.authority.key();
         game_account.id = id.clone();
-        game_account.starting_card = starting_card;
+        msg!("{:?}", starting_card);
+        game_account.starting_card = starting_card.clone();
         //game_account.features = features;
         //game_account.troop_templates = troop_list;
         

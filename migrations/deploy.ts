@@ -21,18 +21,26 @@ async function createGame(name:string){
   const mods:TroopAndMod[] = JSON.parse((await fs.readFile('migrations/assets/unit_mods.json')).toString())
   const idl = JSON.parse((await fs.readFile('target/idl/legacy_sol.json')).toString())
   const CONTRACT_ADDRESS = "Cz4TVYSDxwobuiKdtZY8ejp3hWL7WfCbPNYGUqnNBVSe";
+  // Localhost Deploy
   const connection = new anchor.web3.Connection('http://127.0.0.1:8899');
-  //console.log("Connection Established");
-
-  
   const keypair = anchor.web3.Keypair.generate();
   await connection.requestAirdrop(keypair.publicKey, (1e9*1000));
   console.log("Starting 25s sleep to confirm the airdrop went through");
   await new Promise(f => setTimeout(f, 25000)); //wait for airdrop to go through
   await fs.writeFile('migrations/game_admin.key', bs58.encode(keypair.secretKey));
+  
+  //console.log(`Provider Address: ${provider.wallet.publicKey.toBase58()}\nBalance ${(await connection.getBalance(keypair.publicKey, "finalized"))/1e9} SOL`)
   const provider = new anchor.Provider(connection, new NodeWallet(keypair), {});
-  console.log(`Provider Address: ${provider.wallet.publicKey.toBase58()}\nBalance ${(await connection.getBalance(keypair.publicKey, "finalized"))/1e9} SOL`)
   const game:Program<LegacySol> = new anchor.Program<LegacySol>(idl, CONTRACT_ADDRESS, provider);
+
+
+  //Devnet Deploy
+  /*
+  const connection = new anchor.web3.Connection('http://api.devnet.solana.com');
+  const provider = new anchor.Provider(connection, new NodeWallet(anchor.web3.Keypair.fromSecretKey(bs58.decode('2Q1ComiijcAgk5ZhrzkXB3qffFhK23TMV1tw9ZzUcHo3f3QN4q5erd2SVaq12kuX23YU6KKtnyKt53N8kVNULBVn'))), {});
+
+  */
+
 
   //RPC New Game
   const [game_acc, game_bmp] = findProgramAddressSync([Buffer.from(name)], game.programId);
@@ -54,6 +62,7 @@ async function createGame(name:string){
     id: new anchor.BN(0),
     cardType: {"unit": rust_starting_unit}
   }
+  console.log(starting_card);
   await game.rpc.createGame(name, new anchor.BN(game_bmp), new anchor.BN(start_loc_bmp), starting_card, {
     accounts: {
       authority: provider.wallet.publicKey,
@@ -63,7 +72,8 @@ async function createGame(name:string){
     }
   })
   console.log("Initalized Game");
-
+  console.log(JSON.stringify(await game.account.game.fetch(game_acc)));
+  return;
   //RPC Features
 
   //Need to cast it to Rust Enum
