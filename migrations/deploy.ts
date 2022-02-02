@@ -73,7 +73,7 @@ async function createGame(name:string){
   })
   console.log("Initalized Game");
   console.log(JSON.stringify(await game.account.game.fetch(game_acc)));
-  return;
+
   //RPC Features
 
   //Need to cast it to Rust Enum
