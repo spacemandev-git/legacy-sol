@@ -60,7 +60,7 @@ async function createGame(name:string){
   const starting_card = {
     dropTable: {"basic": {}},
     id: new anchor.BN(0),
-    cardType: {"unit": rust_starting_unit}
+    cardType: {"unit": {"unit": rust_starting_unit}}
   }
   console.log(starting_card);
   await game.rpc.createGame(name, new anchor.BN(game_bmp), new anchor.BN(start_loc_bmp), starting_card, {
