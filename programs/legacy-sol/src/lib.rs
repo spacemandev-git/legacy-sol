@@ -133,7 +133,7 @@ pub mod legacy_sol {
         let next_scan = feature.last_scanned + feature.scan_recovery;
         let clock = Clock::get().unwrap();
 
-        if next_scan < clock.slot {
+        if next_scan < clock.slot && feature.times_scanned > 0 {
             return Err(ErrorCode::LocationOnCooldown.into())
         }
 
